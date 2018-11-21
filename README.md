@@ -1,4 +1,4 @@
-# power-weixin-webapp
+# power-weixin-standard
 
 > A Vue.js project vue2.0, vux, cube-ui , axios, ES6, webpack3.0
 
