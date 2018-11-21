@@ -161,9 +161,6 @@
       <div class="back-btn-wrap">
         <back-btn where="peopleCenter"></back-btn>
       </div>
-      <loading v-model="mx_isLoading"></loading>
-      <toast v-model="mx_toastShow" type="text" :time="mx_deleyTime">修改成功</toast>
-      <alert v-model="mx_alertShow" @on-hide="MixinAlertHideEvent" :title="mx_alertTitle" :content="mx_message"></alert>
     </div>
   </transition>
 </template>
@@ -171,11 +168,9 @@
 import { mapActions } from 'vuex'
 import { SwitchesBox, SearchBox, backBtn } from 'components'
 import { findIndex, formatDate } from 'common/js/Util.js'
-import { commonComponentMixin } from 'common/js/mixin.js'
 
 export default {
   name: 'workflow',
-  mixins: [commonComponentMixin],
   data () {
     return {
       searchQuery: '',
