@@ -21,7 +21,8 @@ import {
   deleteFile,
   GetJsSdk,
   AddImage,
-  MyWorkInfos
+  MyWorkInfos,
+  MyMessageInfos
 } from 'api'
 
 // 附件相关
@@ -391,6 +392,19 @@ export const MyWorkInfosData = function ({commit}, params) {
   })
 }
 // 获取消息的数据接口
+export const MyMessageInfosData = function ({commit}, params) {
+  return new Promise((resolve, reject) => {
+    MyMessageInfos().then((res) => {
+      if (res.success) {
+        resolve(res)
+      } else {
+        reject(getError(res.message))
+      }
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
 
 // 菜单相关
 // 获取项目中心菜单数据
