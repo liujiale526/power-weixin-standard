@@ -23,8 +23,27 @@ import {
   AddImage,
   MyWorkInfos,
   MyMessageInfos,
-  MyNotifyInfos
+  MyNotifyInfos,
+  FlowAction
 } from 'api'
+
+// 审批流相关
+export const FlowActionData = function ({commit}, str) {
+  return new Promise((resolve, reject) => {
+    commit(types.SHOWLOADING, true)
+    FlowAction(str).then((res) => {
+      commit(types.SHOWLOADING, false)
+      if (res.success) {
+        resolve(res)
+      } else {
+        reject(getError(res.message))
+      }
+    }).catch((e) => {
+      commit(types.SHOWLOADING, false)
+      reject(e)
+    })
+  })
+}
 
 // 附件相关
 // 上传微信图片

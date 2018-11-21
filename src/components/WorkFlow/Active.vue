@@ -170,9 +170,6 @@
         :currentUserList="ConfigUserList"
         @complete="completeByDraft"
       ></position-user-list>
-      <loading v-model="mx_isLoading"></loading>
-      <toast v-model="mx_toastShow" type="text" :time="mx_deleyTime">{{ afterSaveMsg }}</toast>
-      <alert v-model="mx_alertShow" @on-hide="MixinAlertHideEvent" :title="mx_alertTitle" :content="mx_message"></alert>
     </div>
   </transition>
 </template>
@@ -182,8 +179,6 @@ import LineBreak from 'base/line/line.vue'
 import PositionUserList from 'base/position-user-list/position-user-list.vue'
 import PersonSelectList from 'base/person-select-list/person-select-list.vue'
 import { EFlowOperate, EFlowLineType } from 'common/js/config.js'
-import { commonComponentMixin } from 'common/js/mixin.js'
-import { FlowAction } from 'api/index.js'
 import { XTextarea, Group, InlineXSwitch } from 'vux'
 import CheckIcon from 'base/check-icon/check-icon.vue'
 import { createGuid } from 'common/js/Util.js'
@@ -192,13 +187,11 @@ const SELECTFLOW = '请选择一个流程'
 
 export default {
   name: 'workflow',
-  mixins: [commonComponentMixin],
   data () {
     return {
       selectType: 'single',
       query: {},
       formState: '',
-      afterSaveMsg: '',
       WorkFlowList: [],
       WorkFlow: {},
       currentWorkFlow: null,
@@ -218,13 +211,7 @@ export default {
         NodeCode: ''
       },
       ConfigUserList: [],
-      currentRow: {},
-      mx_isLoading: false,
-      mx_message: '',
-      mx_alertShow: false,
-      mx_alertTitle: '提示',
-      mx_toastShow: false,
-      mx_deleyTime: 1000
+      currentRow: {}
     }
   },
   mounted () {
@@ -267,20 +254,22 @@ export default {
         Current: current
       })
 
-      this.MinXinHttpFetch(FlowAction(JSON.stringify(obj)), (response) => {
-        if (response.success) {
-          let value = response.data.value
-          let NodeList = value.NodeList.concat()
+      this.FlowActionData(JSON.stringify(obj)).then((response) => {
+        let value = response.data.value
+        let NodeList = []
 
-          NodeList.map((item, index) => {
-            item.CanSendUsers = JSON.parse(item.CanSendUsers)
-            return item
-          })
-
-          this.NodeList = NodeList.concat()
-        } else {
-          this.MixinAlertShowEvent(response.message)
+        if (value.NodeList) {
+          NodeList = value.NodeList.concat()
         }
+
+        NodeList.map((item, index) => {
+          item.CanSendUsers = JSON.parse(item.CanSendUsers)
+          return item
+        })
+
+        this.NodeList = NodeList.concat()
+      }).catch((e) => {
+        this.AlertShowEvent(e)
       })
     },
     // 获取选择的节点和人员(送审和抄送)
@@ -357,20 +346,18 @@ export default {
         VoteValue: ''
       })
 
-      this.MinXinHttpFetch(FlowAction(JSON.stringify(params)), (response) => {
-        if (response.success) {
-          this.GetInformCount().then(() => {
-            if (this.formState === 'view') {
-              this.$router.push('/workinfos')
-            } else {
-              this.$router.back()
-            }
-          }).catch((e) => {
-            this.AlertShowEvent(e.message)
-          })
-        } else {
-          this.MixinAlertShowEvent(response.message)
-        }
+      this.FlowActionData(JSON.stringify(params)).then((response) => {
+        this.GetInformCount().then(() => {
+          if (this.formState === 'view') {
+            this.$router.push('/workinfos')
+          } else {
+            this.$router.back()
+          }
+        }).catch((e) => {
+          this.AlertShowEvent(e.message)
+        })
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
       })
     },
     // 抄送人员的点击事件
@@ -512,11 +499,7 @@ export default {
         FlowOperate: EFlowOperate.Active
       }
 
-      this.MinXinHttpFetch(FlowAction(JSON.stringify(params)), (response) => {
-        if (!response.success) {
-          this.MixinAlertShowEvent(response.message)
-          return false
-        }
+      this.FlowActionData(JSON.stringify(params)).then((response) => {
         let value = response.data.value
         let NextNodeList = []
 
@@ -534,6 +517,8 @@ export default {
 
         this.current = Object.assign({}, value.Current)
         this.NextNodeList = this.formatNextNodeList(NextNodeList)
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
       })
     },
     // 组织数据，添加权限
@@ -652,8 +637,8 @@ export default {
         SequeID: this.query.SequeID
       }
 
-      this.MinXinHttpFetch(FlowAction(JSON.stringify(params)), (response) => {
-        let value = response.data.value
+      this.FlowActionData(JSON.stringify(params)).then((res) => {
+        let value = res.data.value
         let WorkFlowList = []
 
         this.WorkFlow = value
@@ -694,6 +679,8 @@ export default {
             this.toNextStep('selectFlow')
           }, 300)
         }
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
       })
     },
     // 选择一条流程 当前组件调用
@@ -769,11 +756,10 @@ export default {
         }
       })
 
-      this.MinXinHttpFetch(FlowAction(JSON.stringify(params)), (response) => {
-        if (response.success) {
-          this.afterSaveMsg = '完成选择'
-          this.mx_toastShow = true
-        }
+      this.FlowActionData(JSON.stringify(params)).then(() => {
+        this.ToastShowEvent('完成选择')
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
       })
     },
     // 是否显示正常节点
@@ -832,7 +818,9 @@ export default {
     },
     ...mapActions([
       'GetInformCount',
-      'AlertShowEvent'
+      'FlowActionData',
+      'AlertShowEvent',
+      'ToastShowEvent'
     ])
   },
   components: {
