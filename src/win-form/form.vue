@@ -141,7 +141,6 @@
   </transition>
 </template>
 <script type="text/ecmascript-6">
-import { Base64 } from 'js-base64'
 import { mapGetters, mapMutations } from 'vuex'
 // 引入子表和通用相关组件
 import {
@@ -173,6 +172,8 @@ import {
   settingActionPermission,
   getTabShowRight
 } from 'common/js/Util.js'
+
+import { Base64 } from 'js-base64'
 
 const DIRICTION_H = 'horizontal'
 const debug = process.env.NODE_ENV !== 'production'
@@ -334,12 +335,20 @@ export default {
                   this.MixinAlertShowEvent('获取不到App的配置信息')
                 })
               } else {
-                window.open(`/Form/ValidForm/${FromId}/${formstate}/${Id}/`, '_self')
+                this.openPCForm(FromId, formstate, Id)
               }
             }
           }
         })
       }
+    },
+    // 打开PC端的表单
+    openPCForm (FromId, formstate, Id) {
+      let baseLink = '/Form/ValidForm/650540a6-af98-4669-b1c3-925691912d79'
+      let query = `?FormId=${FromId}&KeyValue=${Id}`
+      let link = `${baseLink}/${formstate}/${Id}/${Base64.encode(FromId)}${query}`
+
+      window.open(link, '_self')
     },
     // 判断tab的显示方法
     checkSwitchPermission (formConfigUI, formData, value, subPermission) {
