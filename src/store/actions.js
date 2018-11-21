@@ -22,7 +22,8 @@ import {
   GetJsSdk,
   AddImage,
   MyWorkInfos,
-  MyMessageInfos
+  MyMessageInfos,
+  MyNotifyInfos
 } from 'api'
 
 // 附件相关
@@ -404,6 +405,31 @@ export const MyMessageInfosData = function ({commit}, params) {
 
     commit(types.SHOWLOADING, true)
     MyMessageInfos(obj).then((res) => {
+      commit(types.SHOWLOADING, false)
+      if (res.success) {
+        resolve(res)
+      } else {
+        reject(getError(res.message))
+      }
+    }).catch((e) => {
+      commit(types.SHOWLOADING, false)
+      reject(e)
+    })
+  })
+}
+// 获取通知的数据接口
+export const MyNotifyInfosData = function ({commit}, params) {
+  return new Promise((resolve, reject) => {
+    let obj = Object.assign({
+      types: '',
+      index: 0,
+      size: 8,
+      swhere: '1=1',
+      humanid: ''
+    }, params)
+
+    commit(types.SHOWLOADING, true)
+    MyNotifyInfos(obj).then((res) => {
       commit(types.SHOWLOADING, false)
       if (res.success) {
         resolve(res)
