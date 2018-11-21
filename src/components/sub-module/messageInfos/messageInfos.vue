@@ -173,7 +173,6 @@ import { mapMutations, mapActions } from 'vuex'
 import { SwitchesBox, SearchBox, backBtn } from 'components'
 import { findIndex, formatDate } from 'common/js/Util.js'
 import { commonComponentMixin } from 'common/js/mixin.js'
-import { MyMessageInfos } from 'api/index.js'
 
 export default {
   name: 'workflow',
@@ -341,15 +340,14 @@ export default {
         params.swhere += ` and (Title like '%${this.searchQuery}%' or EpsProjName like '%${this.searchQuery}%')`
       }
 
-      this.MinXinHttpFetch(MyMessageInfos(params), (response) => {
-        if (response.success) {
-          this.ready = true
-          if (option.success) {
-            option.success(response.data)
-          }
-        } else {
-          this.ready = false
+      this.MyMessageInfosData(params).then((res) => {
+        this.ready = true
+        if (option.success) {
+          option.success(res.data)
         }
+      }).catch((e) => {
+        this.ready = false
+        this.AlertShowEvent(e.message)
       })
     },
     // 获取数据的分类
@@ -417,6 +415,7 @@ export default {
       setCurrentMessage: 'SET_CURRENTMESSAGE'
     }),
     ...mapActions([
+      'MyMessageInfosData',
       'GetInformCount',
       'HasReadMessage',
       'AlertShowEvent'

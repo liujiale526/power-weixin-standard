@@ -394,13 +394,24 @@ export const MyWorkInfosData = function ({commit}, params) {
 // 获取消息的数据接口
 export const MyMessageInfosData = function ({commit}, params) {
   return new Promise((resolve, reject) => {
-    MyMessageInfos().then((res) => {
+    let obj = Object.assign({
+      types: '',
+      index: 0,
+      size: 8,
+      swhere: '1=1',
+      humanid: ''
+    }, params)
+
+    commit(types.SHOWLOADING, true)
+    MyMessageInfos(obj).then((res) => {
+      commit(types.SHOWLOADING, false)
       if (res.success) {
         resolve(res)
       } else {
         reject(getError(res.message))
       }
     }).catch((e) => {
+      commit(types.SHOWLOADING, false)
       reject(e)
     })
   })
