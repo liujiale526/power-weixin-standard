@@ -390,6 +390,7 @@ export const MyWorkInfosData = function ({commit}, params) {
     })
   })
 }
+// 获取消息的数据接口
 
 // 菜单相关
 // 获取项目中心菜单数据
