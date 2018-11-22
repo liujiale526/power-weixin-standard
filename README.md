@@ -20,6 +20,6 @@ npm run build/cnpm run build/yarn build
 npm run build --report
 
 
-#在开发平台配置文档说明
+# 在开发平台配置文档说明
 
 ## 窗体文件配置 ##
