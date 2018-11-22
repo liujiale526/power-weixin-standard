@@ -840,7 +840,7 @@ export default {
               padding: 10px;
               font-size: 14px;
               display: flex;
-              border-left: 3px solid #09BB07;
+              border-left: 3px solid @mainColor;
               .name {
                 flex: 1;
                 min-width: 0px;

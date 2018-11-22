@@ -70,14 +70,7 @@ export default {
       List: [],
       index: 0,
       size: 20,
-      pullDownRefreshThreshold: 60,
-      afterSaveMsg: '',
-      mx_isLoading: false,
-      mx_message: '',
-      mx_alertShow: false,
-      mx_alertTitle: '提示',
-      mx_toastShow: false,
-      mx_deleyTime: 1000
+      pullDownRefreshThreshold: 60
     }
   },
   computed: {

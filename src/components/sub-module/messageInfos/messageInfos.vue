@@ -177,12 +177,6 @@ export default {
       searchQuery: '',
       ready: false,
       WorkInfos: {},
-      mx_isLoading: false,
-      mx_message: '',
-      mx_alertShow: false,
-      mx_alertTitle: '提示',
-      mx_toastShow: false,
-      mx_deleyTime: 1000,
       selectedLabel: '待处理的',
       tabLabels: [
         {

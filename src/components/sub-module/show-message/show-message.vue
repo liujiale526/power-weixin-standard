@@ -32,10 +32,6 @@
       <div @click="back" class="back-btn">
         <span class="fa fa-reply"></span>
       </div>
-
-      <loading v-model="mx_isLoading"></loading>
-      <toast v-model="mx_toastShow" type="text" :time="mx_deleyTime">已读</toast>
-      <alert v-model="mx_alertShow" @on-hide="MixinAlertHideEvent" :title="mx_alertTitle" :content="mx_message"></alert>
     </div>
   </transition>
 </template>
@@ -47,14 +43,7 @@ import { formatDate } from 'common/js/Util.js'
 export default {
   mixins: [commonComponentMixin],
   data () {
-    return {
-      mx_isLoading: false,
-      mx_message: '',
-      mx_alertShow: false,
-      mx_alertTitle: '提示',
-      mx_toastShow: false,
-      mx_deleyTime: 1000
-    }
+    return {}
   },
   computed: {
     ...mapGetters([
@@ -71,7 +60,7 @@ export default {
       if (item.IsPowerMessage === 3) { return false }
 
       this.HasReadMessage(item).then(() => {
-        this.mx_toastShow = true
+        this.ToastShowEvent('已读')
       }).catch((e) => {
         this.AlertShowEvent(e.message)
       })
@@ -89,7 +78,8 @@ export default {
     },
     ...mapActions([
       'HasReadMessage',
-      'AlertShowEvent'
+      'AlertShowEvent',
+      'ToastShowEvent'
     ])
   }
 }
