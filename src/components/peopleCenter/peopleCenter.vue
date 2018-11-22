@@ -90,7 +90,6 @@
 import { mapGetters, mapActions } from 'vuex'
 import { getStoreUserSession } from 'api/UserSession.js'
 import { clearStorage, formatDate } from 'common/js/Util.js'
-import { commonComponentMixin } from 'common/js/mixin.js'
 import { systemConfig } from 'common/js/config.js'
 
 const debug = process.env.NODE_ENV !== 'production'
@@ -98,7 +97,6 @@ const IMGBOOTURL = '/PowerPlat/Control/File.ashx?action=browser&_type=ftp&_filei
 
 export default {
   name: 'Setting',
-  mixins: [commonComponentMixin],
   data () {
     return {
       title: '我的',

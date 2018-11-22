@@ -33,8 +33,6 @@
     <div>
       <router-view></router-view>
     </div>
-    <toast v-model="mx_toastShow" type="text" :time="mx_deleyTime">修改成功</toast>
-    <alert v-model="mx_alertShow" @on-hide="MixinAlertHideEvent" :title="mx_alertTitle" :content="mx_message"></alert>
   </div>
 </template>
 
@@ -61,12 +59,7 @@ export default {
       },
       isTopMenu: true,
       UserSession: {},
-      pullDownRefreshThreshold: 60,
-      mx_message: '',
-      mx_alertShow: false,
-      mx_alertTitle: '提示',
-      mx_toastShow: false,
-      mx_deleyTime: 1000
+      pullDownRefreshThreshold: 60
     }
   },
   computed: {

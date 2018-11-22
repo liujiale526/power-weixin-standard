@@ -34,12 +34,10 @@
 <script type="text/ecmascript-6">
 import { mapActions } from 'vuex'
 import { getTokenString } from 'api/login.js'
-import { commonComponentMixin } from 'common/js/mixin.js'
 
 const debug = process.env.NODE_ENV !== 'production'
 
 export default {
-  mixins: [commonComponentMixin],
   data () {
     return {
       Name: '',
