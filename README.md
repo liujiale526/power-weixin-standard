@@ -17,3 +17,43 @@
 # 在开发平台配置文档说明
 
 ## 窗体文件配置 ##
+
+	{
+	    "KeyWord": "PS_IncomeContract", // 当前窗体的KeyWord
+	    "idfield": "Id",				// 主键字段名，一般为Id
+	    "swhere": "",					// 请求窗体数据时的where条件（程序中暂时没有使用此属性）
+	    "size": "10",					// 数据一页的数据个数
+	    "type": "grid",					// 窗体中数据格式是什么形式（程序中暂时没有用到此属性）
+	    "winTitle": "合同登记",			// 窗体的title（默认值是窗体）
+	    "tableListType": "default",		// 窗体数据的UI展示形式
+	    "title": {						// 窗体中每一条数据的title相关的属性
+	        "title": "合同名称",			// title的字段名
+	        "field": "ContractName",	// title要显示的对应的字段
+	        "format": ""				// 字段的显示格式 "" 默认代表是text类型
+	    },
+	    "left": {
+	        "title": "合同编号",
+	        "field": "ContractCode",
+	        "format": ""
+	    },
+	    "center": {
+	        "title": "最终金额",
+	        "field": "FinalContractAmount",
+	        "format": "n2"
+	    },
+	    "right": {
+	        "title": "签订日期",
+	        "field": "SignedDate",
+	        "format": "yyyy-MM-dd"
+	    },
+	    "tag": {
+	        "title": "状态",
+	        "field": "Status",
+	        "format": "combobox"
+	    },
+	    "search": {
+	        "title": "请输入合同名称",
+	        "field": "ContractName",
+	        "format": ""
+	    }
+	}
