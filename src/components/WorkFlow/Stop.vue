@@ -20,34 +20,20 @@
           返回
         </div>
       </div>
-
-      <loading v-model="mx_isLoading"></loading>
-      <toast v-model="mx_toastShow" type="text" :time="mx_deleyTime">{{ afterSaveMsg }}</toast>
-      <alert v-model="mx_alertShow" @on-hide="MixinAlertHideEvent" :title="mx_alertTitle" :content="mx_message"></alert>
     </div>
   </transition>
 </template>
 <script type="text/ecmascript-6">
 import { mapActions } from 'vuex'
 import { XTextarea, Group } from 'vux'
-import { commonComponentMixin } from 'common/js/mixin.js'
-import { FlowAction } from 'api/index.js'
 
 export default {
-  mixins: [commonComponentMixin],
   data () {
     return {
       MindInfo: '',
       formState: '',
       Current: {},
-      HistoryMind: [],
-      afterSaveMsg: '',
-      mx_isLoading: false,
-      mx_message: '',
-      mx_alertShow: false,
-      mx_alertTitle: '提示',
-      mx_toastShow: false,
-      mx_deleyTime: 1000
+      HistoryMind: []
     }
   },
   mounted () {
@@ -59,7 +45,7 @@ export default {
       let valid = this.validSubmitData()
 
       if (!valid.isPass) {
-        this.MixinAlertShowEvent(valid.msg)
+        this.AlertShowEvent(valid.msg)
         return false
       }
 
@@ -71,27 +57,25 @@ export default {
         VoteValue: ''
       })
 
-      this.MinXinHttpFetch(FlowAction(JSON.stringify(params)), (response) => {
-        if (response.success) {
-          this.afterSaveMsg = '完成提交'
-          this.mx_toastShow = true
+      this.FlowActionData(JSON.stringify(params)).then((response) => {
+        this.ToastShowEvent('完成提交')
+        this.GetInformCount().then(() => {
+          if (this.timer) {
+            clearTimeout(this.timer)
+          }
 
-          this.GetInformCount().then(() => {
-            if (this.timer) {
-              clearTimeout(this.timer)
+          this.timer = setTimeout(() => {
+            if (this.formState === 'view') {
+              this.$router.push('/workinfos')
+            } else {
+              this.goBack()
             }
-
-            this.timer = setTimeout(() => {
-              if (this.formState === 'view') {
-                this.$router.push('/workinfos')
-              } else {
-                this.goBack()
-              }
-            }, 1000)
-          }).catch((e) => {
-            this.AlertShowEvent(e.message)
-          })
-        }
+          }, 1000)
+        }).catch((e) => {
+          this.AlertShowEvent(e.message)
+        })
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
       })
     },
     // 验证信息
@@ -119,13 +103,12 @@ export default {
         Current: this.query
       })
 
-      this.MinXinHttpFetch(FlowAction(JSON.stringify(params)), (response) => {
-        if (response.success) {
-          let value = response.data.value
-
-          this.Current = Object.assign({}, value.Current)
-          this.HistoryMind = value.HistoryMind.concat()
-        }
+      this.FlowActionData(JSON.stringify(params)).then((response) => {
+        let value = response.data.value
+        this.Current = Object.assign({}, value.Current)
+        this.HistoryMind = value.HistoryMind.concat()
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
       })
     },
     // 获取路由中的参数
@@ -142,7 +125,9 @@ export default {
     },
     ...mapActions([
       'GetInformCount',
-      'AlertShowEvent'
+      'FlowActionData',
+      'AlertShowEvent',
+      'ToastShowEvent'
     ])
   },
   components: {

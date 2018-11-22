@@ -45,33 +45,21 @@
           </li>
         </ul>
       </div>
-      <loading v-model="mx_isLoading"></loading>
-      <toast v-model="mx_toastShow" type="text" :time="mx_deleyTime">{{ afterSaveMsg }}</toast>
-      <alert v-model="mx_alertShow" @on-hide="MixinAlertHideEvent" :title="mx_alertTitle" :content="mx_message"></alert>
     </div>
   </transition>
 </template>
 <script type="text/ecmascript-6">
+import { mapActions } from 'vuex'
 import LineBreak from 'base/line/line.vue'
-import { commonComponentMixin } from 'common/js/mixin.js'
-import { FlowAction } from 'api/index.js'
 import { EFlowInboxStatus, EFlowOperate } from 'common/js/config.js'
 
 export default {
   name: 'workflow',
-  mixins: [commonComponentMixin],
   data () {
     return {
       query: {},
       ResultInfo: {},
-      HistoryMind: [],
-      afterSaveMsg: '',
-      mx_isLoading: false,
-      mx_message: '',
-      mx_alertShow: false,
-      mx_alertTitle: '提示',
-      mx_toastShow: false,
-      mx_deleyTime: 1000
+      HistoryMind: []
     }
   },
   mounted () {
@@ -90,14 +78,14 @@ export default {
         }
       })
 
-      this.MinXinHttpFetch(FlowAction(JSON.stringify(params)), (response) => {
-        if (response.success) {
-          let value = response.data.value
-          if (value.ResultInfo) {
-            this.ResultInfo = value.ResultInfo
-            this.HistoryMind = this.ResultInfo.HistoryMind
-          }
+      this.FlowActionData(JSON.stringify(params)).then((response) => {
+        let value = response.data.value
+        if (value.ResultInfo) {
+          this.ResultInfo = value.ResultInfo
+          this.HistoryMind = this.ResultInfo.HistoryMind
         }
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
       })
     },
     // 节点的发送的指令
@@ -146,7 +134,11 @@ export default {
       if (query) {
         this.query = Object.assign({}, query)
       }
-    }
+    },
+    ...mapActions([
+      'FlowActionData',
+      'AlertShowEvent'
+    ])
   },
   components: {
     LineBreak

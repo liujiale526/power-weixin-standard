@@ -210,7 +210,7 @@ export default {
         Current: this.query
       })
 
-      this.FlowActionData(JSON.stringify(params)).then(() => {
+      this.FlowActionData(JSON.stringify(params)).then((response) => {
         let value = response.data.value
 
         this.Current = Object.assign({}, value.Current)
