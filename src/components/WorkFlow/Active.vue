@@ -322,12 +322,12 @@ export default {
       let selectedNode = this.getSelectedNode()
 
       if (selectedNode.error !== '') {
-        this.MixinAlertShowEvent(selectedNode.error)
+        this.AlertShowEvent(selectedNode.error)
         return false
       }
 
       if (this.IsMindMustInput && this.MindInfo === '') {
-        this.MixinAlertShowEvent('审批意见不许为空')
+        this.AlertShowEvent('审批意见不许为空')
         return false
       }
 
@@ -369,7 +369,7 @@ export default {
         NextNodeList[a].CanSelectCopyUsers[b].checked =
         !NextNodeList[a].CanSelectCopyUsers[b].checked
       } else {
-        this.MixinAlertShowEvent(`请先选择${this.NextNodeList[a].NodeName}节点`)
+        this.AlertShowEvent(`请先选择${this.NextNodeList[a].NodeName}节点`)
       }
 
       this.NextNodeList = [...NextNodeList]
@@ -383,7 +383,7 @@ export default {
 
       if (lineChecked) {
         if (SelectUserMode === 'SelectAllAndDisabled') {
-          this.MixinAlertShowEvent('你没有修改权限')
+          this.AlertShowEvent('你没有修改权限')
           return false
         }
 
@@ -400,7 +400,7 @@ export default {
           })
         }
       } else {
-        this.MixinAlertShowEvent(`请先选择${this.NextNodeList[a].NodeName}节点`)
+        this.AlertShowEvent(`请先选择${this.NextNodeList[a].NodeName}节点`)
       }
 
       this.NextNodeList = [...NextNodeList]
@@ -412,7 +412,7 @@ export default {
       let selectNodeMode = NextNodeList[index].SelectNodeMode
 
       if (selectNodeMode === 'SelectedAndDisabled') {
-        this.MixinAlertShowEvent('禁止取消')
+        this.AlertShowEvent('禁止取消')
         return false
       }
 
@@ -593,7 +593,7 @@ export default {
         // 节点选择
         case 'nodeSelect':
           if (!flow) {
-            this.MixinAlertShowEvent(SELECTFLOW)
+            this.AlertShowEvent(SELECTFLOW)
             return false
           }
           this.currentStop = step
@@ -602,7 +602,7 @@ export default {
         // 人员选择
         case 'peopleSelect':
           if (!flow) {
-            this.MixinAlertShowEvent(SELECTFLOW)
+            this.AlertShowEvent(SELECTFLOW)
             return false
           }
           this.currentStop = step
@@ -731,7 +731,7 @@ export default {
       })
 
       if (lists.length === 0) {
-        this.MixinAlertShowEvent('人员不能为空')
+        this.AlertShowEvent('人员不能为空')
         return false
       }
 
