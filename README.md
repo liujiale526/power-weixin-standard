@@ -85,3 +85,8 @@
 	- title: 这个属性值可以为""也可以为"状态"， 但是最终不显示这个字段，
 	- field: 一般这个字段是Status,但是具体的要根据项目的具体的字段来填写
 	- format: 如果是状态的话，一般都是下拉框的格式 "combobox"
+
+
+#### 配置之后的效果图
+
+![](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/window.png)
