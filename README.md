@@ -4,7 +4,6 @@
 
 ## 启动工程项目
 
-``` bash
 # 安装项目所需的依赖包
 如果网速良好，可以执行 npm install
 如果npm安装报错，可以先全局安装npm install cnpm --g,
