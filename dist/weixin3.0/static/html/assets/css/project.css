@@ -1,0 +1,47 @@
+html, body {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.project-center {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.project-center .project-title {
+  font-size: 16px;
+  font-weight: 200;
+  padding: 10px;
+  border-bottom: 1px solid #ffffff;
+}
+
+.echarts-map {
+  width: 100%;
+}
+
+.echarts-map .echarts-unit {
+  width: 100%;
+  padding-bottom: 30px;
+  margin-bottom: 15px;
+  border-bottom: 1px dotted #ffffff;
+}
+
+.echarts-map .echarts-unit:last-child{
+  border: none;
+}
+
+.echarts-map .echarts-unit .echart-content {
+  width: 100%;
+  height: 250px;
+  background-color: #ffffff;
+}
+
+.echarts-map .echarts-unit  .title {
+  font-size: 16px;
+  font-weight: 200;
+  padding: 5px 10px
+}
