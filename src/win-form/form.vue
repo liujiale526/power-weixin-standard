@@ -329,7 +329,6 @@ export default {
               }
             } else {
               let { FromId, formstate, Id } = this.routerParams
-
               if (debug) {
                 this.$nextTick(() => {
                   this.MixinAlertShowEvent('获取不到App的配置信息')
