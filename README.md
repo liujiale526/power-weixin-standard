@@ -19,41 +19,40 @@
 ## 窗体文件配置 ##
 
 	{
-	    "KeyWord": "PS_IncomeContract", // 当前窗体的KeyWord
-	    "idfield": "Id",// 主键字段名，一般为Id
-	    "swhere": "",// 请求窗体数据时的where条件（程序中暂时没有使用此属性）
-	    "size": "10",// 数据一页的数据个数
-	    "type": "grid",// 窗体中数据格式是什么形式（程序中暂时没有用到此属性）
-	    "winTitle": "合同登记",// 窗体的title（默认值是窗体）
-	    "tableListType": "default",// 窗体数据的UI展示形式
-	    "title": {// 窗体中每一条数据的title相关的属性
+	    "KeyWord": "PS_IncomeContract", // (必填)当前窗体的KeyWord
+	    "idfield": "Id",// (必填)主键字段名，一般为Id
+	    "swhere": "",// (可填)请求窗体数据时的where条件（程序中暂时没有使用此属性）
+	    "size": "10",// (必填)数据一页的数据个数
+	    "type": "grid",// (可填)窗体中数据格式是什么形式（程序中暂时没有用到此属性）
+	    "winTitle": "合同登记",// (可填)窗体的title（默认值是窗体）
+	    "tableListType": "default",// (可填)窗体数据的UI展示形式
+	    "title": {// 窗体中每一条数据的title位置相关的属性和信息
 	        "title": "合同名称",// title的字段名
 	        "field": "ContractName",// title要显示的对应的字段
 	        "format": ""// 字段的显示格式 "" 默认代表是text类型
 	    },
-	    "left": {
-	        "title": "合同编号",
-	        "field": "ContractCode",
-	        "format": ""
+	    "left": {// 窗体中每条数据的left位置显示的相关属性和信息
+	        "title": "合同编号",// left的字段名
+	        "field": "ContractCode",//left要显示的字段
+	        "format": ""// 字段要显示的格式 "" 默认代表是text类型
 	    },
-	    "center": {
-	        "title": "最终金额",
-	        "field": "FinalContractAmount",
-	        "format": "n2"
+	    "center": {// 窗体中每条数据的center位置显示的相关属性和信息
+	        "title": "最终金额",// center的字段名
+	        "field": "FinalContractAmount",// center要显示的字段
+	        "format": "n2"// 字段要显示的格式 "n2" 代表是千分位 保留两个小数点类型
 	    },
-	    "right": {
-	        "title": "签订日期",
-	        "field": "SignedDate",
-	        "format": "yyyy-MM-dd"
+	    "right": {// 窗体中每条数据的right位置显示的相关属性和信息
+	        "title": "签订日期",// right的字段名
+	        "field": "SignedDate",// right要显示的字段
+	        "format": "yyyy-MM-dd"// 字段要显示的格式 "yyyy-MM-dd" 代表是日期格式
 	    },
-	    "tag": {
-	        "title": "状态",
-	        "field": "Status",
-	        "format": "combobox"
-	    },
-	    "search": {
-	        "title": "请输入合同名称",
-	        "field": "ContractName",
-	        "format": ""
+	    "tag": {// 窗体中每条数据的tag位置显示的相关属性和信息
+	        "title": "状态",// tag的字段名(这个位置特殊，字段名不会显示出来)
+	        "field": "Status",// tag要显示的字段
+	        "format": "combobox"// 字段要显示的格式 "combobox" 代表是下拉框	    },
+	    "search": {//这个是窗体中搜索框search的相关信息
+	        "title": "请输入合同名称",// search的placeholder
+	        "field": "ContractName",// 根据什么字段执行搜索
+	        "format": ""// 类型，一般给一个""就可以了，也可以不加
 	    }
 	}
