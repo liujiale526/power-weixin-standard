@@ -655,6 +655,9 @@ export default {
       'ToastShowEvent'
     ])
   },
+  destroyed () {
+    this.timer && clearTimeout(this.timer)
+  },
   components: {
     FormRow,
     FormAction,
