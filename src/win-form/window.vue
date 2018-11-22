@@ -64,27 +64,20 @@
           >
         </footer-bar>
       </nav>
-
-      <router-view></router-view>
-      <loading v-model="mx_isLoading"></loading>
-      <toast v-model="mx_toastShow" type="text" :time="mx_deleyTime">修改成功</toast>
-      <alert v-model="mx_alertShow" @on-hide="MixinAlertHideEvent" :title="mx_alertTitle" :content="mx_message"></alert>
     </div>
   </transition>
 </template>
 <script type="text/ecmascript-6">
+import { mapActions } from 'vuex'
 import SearchBox from 'base/search-box/search-box.vue'
 import FormList from 'base/form-list/form-list.vue'
 import FooterBar from 'base/footer-bar/footer-bar.vue'
 
-import { commonComponentMixin } from 'common/js/mixin.js'
 import { getStoreUserSession } from 'api/UserSession.js'
 import { removeList, searchLists, getTableType } from 'common/js/Util.js'
-import { MenuWidget, GridPageLoad, FormSave, FormInit } from 'api/index.js'
 
 export default {
   name: 'window',
-  mixins: [commonComponentMixin],
   data () {
     return {
       KeyWord: '',
@@ -106,13 +99,7 @@ export default {
       placeholder: '',
       config: {},
       tableType: '',
-      option: {},
-      mx_isLoading: false,
-      mx_message: '',
-      mx_alertShow: false,
-      mx_alertTitle: '提示',
-      mx_toastShow: false,
-      mx_deleyTime: 1000
+      option: {}
     }
   },
   computed: {
@@ -177,9 +164,7 @@ export default {
           this._FormInit(() => {
             this._GridPageLoad(this.config, (data) => {
               this.formList = data
-              if (callback) {
-                callback()
-              }
+              callback && callback()
             })
           })
         })
@@ -187,7 +172,7 @@ export default {
     },
     // 获取窗体配置信息数据
     _MenuWidget (callback) {
-      this.MinXinHttpFetch(MenuWidget(this.MenuId), (response) => {
+      this.MenuWidgetData(this.MenuId).then((response) => {
         let value = response.data.value
         this.ExtJson = JSON.parse(value[0].ExtJson)
         this.config = this.ExtJson.config
@@ -197,9 +182,9 @@ export default {
         this.windowConfig = JSON.parse(value[0].WeixinExtJson)
 
         this.getWindowConfigForUI(this.windowConfig)
-        if (callback) {
-          callback()
-        }
+        callback && callback()
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
       })
     },
     _FormInit (callback) {
@@ -209,13 +194,11 @@ export default {
         FormState: 'edit'
       }
 
-      this.MinXinHttpFetch(FormInit(params), (response) => {
-        if (response.success) {
-          this.comboboxdata = Object.assign({}, JSON.parse(response.data.comboboxdata))
-          if (callback) {
-            callback()
-          }
-        }
+      this.FormInitData(params).then((response) => {
+        this.comboboxdata = Object.assign({}, JSON.parse(response.data.comboboxdata))
+        callback && callback()
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
       })
     },
     // 加载窗体中的数据
@@ -237,20 +220,15 @@ export default {
         extparams: ''
       }
 
-      this.MinXinHttpFetch(GridPageLoad(params), (response) => {
+      this.GridPageLoadData(params).then((response) => {
         let value = response.data.value
         let getData = []
         if (value !== '') {
           getData = JSON.parse(value)
         }
-
-        if (!searchQuery || searchQuery === '') {
-          if (callback) {
-            callback(getData)
-          }
-        } else {
-          callback(getData)
-        }
+        callback && callback(getData)
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
       })
     },
     // 删除表单数据
@@ -271,12 +249,11 @@ export default {
       }
       params.JsonData = JSON.stringify(obj)
       params.FormId = this.config.openformid
-      this.MinXinHttpFetch(FormSave(params), (response) => {
-        if (response.success) {
-          if (callback) {
-            callback()
-          }
-        }
+
+      this.FormSaveData(params).then((response) => {
+        callback && callback()
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
       })
     },
     // search start
@@ -375,7 +352,17 @@ export default {
     },
     _back () {
       this.$router.back()
-    }
+    },
+    ...mapActions([
+      'MenuWidgetData',
+      'FormInitData',
+      'GridPageLoadData',
+      'FormSaveData',
+      'AlertShowEvent'
+    ])
+  },
+  destroyed () {
+    this.timer && clearTimeout(this.timer)
   },
   components: {
     SearchBox,

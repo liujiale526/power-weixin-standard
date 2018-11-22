@@ -24,8 +24,64 @@ import {
   MyWorkInfos,
   MyMessageInfos,
   MyNotifyInfos,
-  FlowAction
+  FlowAction,
+  MenuWidget,
+  FormInit,
+  FormSave
 } from 'api'
+
+// 窗体和表单相关
+// 保存或者删除信息
+export const FormSaveData = function ({commit}, params) {
+  return new Promise((resolve, reject) => {
+    commit(types.SHOWLOADING, true)
+    FormSave(params).then((res) => {
+      commit(types.SHOWLOADING, false)
+      if (res.success) {
+        resolve(res)
+      } else {
+        reject(getError(res.message))
+      }
+    }).catch((e) => {
+      commit(types.SHOWLOADING, false)
+      reject(e)
+    })
+  })
+}
+// 根据菜单的Id获取菜单的相关配置信息
+export const MenuWidgetData = function ({commit}, MenuId) {
+  return new Promise((resolve, reject) => {
+    commit(types.SHOWLOADING, true)
+    MenuWidget(MenuId).then((res) => {
+      commit(types.SHOWLOADING, false)
+      if (res.success) {
+        resolve(res)
+      } else {
+        reject(getError(res.message))
+      }
+    }).catch((e) => {
+      commit(types.SHOWLOADING, false)
+      reject(e)
+    })
+  })
+}
+// 获取表单中对应的配置信息
+export const FormInitData = function ({commit}, params) {
+  return new Promise((resolve, reject) => {
+    commit(types.SHOWLOADING, true)
+    FormInit(params).then((res) => {
+      commit(types.SHOWLOADING, false)
+      if (res.success) {
+        resolve(res)
+      } else {
+        reject(getError(res.message))
+      }
+    }).catch((e) => {
+      commit(types.SHOWLOADING, false)
+      reject(e)
+    })
+  })
+}
 
 // 审批流相关
 export const FlowActionData = function ({commit}, str) {
@@ -176,16 +232,7 @@ export const GetCommentData = function ({commit}, {KeyWord, KeyValue}) {
 }
 // 通用加载数据接口
 export const GridPageLoadData = function ({commit}, params) {
-  let obj = Object.assign({
-    KeyWord: '',
-    KeyWordType: '',
-    index: this.index,
-    size: this.size,
-    swhere: '',
-    select: '',
-    sort: '',
-    extparams: ''
-  }, params)
+  let obj = Object.assign({}, params)
 
   return new Promise((resolve, reject) => {
     commit(types.SHOWLOADING, true)
