@@ -90,3 +90,6 @@
 #### 配置之后的效果图
 
 ![](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/window.png)
+
+
+......持续更新中，敬请期待
