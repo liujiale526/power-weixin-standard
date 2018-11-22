@@ -96,9 +96,6 @@
         :currentUserList="defaultUserList"
         @complete="completeSelectUsers"
       ></position-user-list>
-      <loading v-model="mx_isLoading"></loading>
-      <toast v-model="mx_toastShow" type="text" :time="mx_deleyTime">{{ afterSaveMsg }}</toast>
-      <alert v-model="mx_alertShow" @on-hide="MixinAlertHideEvent" :title="mx_alertTitle" :content="mx_message"></alert>
     </div>
   </transition>
 </template>
@@ -107,12 +104,9 @@ import { mapActions } from 'vuex'
 import CheckIcon from 'base/check-icon/check-icon.vue'
 import PositionUserList from 'base/position-user-list/position-user-list.vue'
 import { XTextarea, Group } from 'vux'
-import { commonComponentMixin } from 'common/js/mixin.js'
-import { FlowAction } from 'api/index.js'
 
 export default {
   name: 'workflow',
-  mixins: [commonComponentMixin],
   data () {
     return {
       query: {},
@@ -138,14 +132,7 @@ export default {
       defaultUserList: [],
       RootUserInfo: {},
       backToRoot: false,
-      positionUserParams: {},
-      afterSaveMsg: '',
-      mx_isLoading: false,
-      mx_message: '',
-      mx_alertShow: false,
-      mx_alertTitle: '提示',
-      mx_toastShow: false,
-      mx_deleyTime: 1000
+      positionUserParams: {}
     }
   },
   mounted () {
@@ -157,7 +144,7 @@ export default {
       let valid = this.validSubmitData()
 
       if (!valid.isPass) {
-        this.MixinAlertShowEvent(valid.msg)
+        this.AlertShowEvent(valid.msg)
         return false
       }
 
@@ -173,27 +160,24 @@ export default {
         VoteValue: ''
       })
 
-      this.MinXinHttpFetch(FlowAction(JSON.stringify(params)), (response) => {
-        if (response.success) {
-          this.afterSaveMsg = '完成提交'
-          this.mx_toastShow = true
-
-          this.GetInformCount().then(() => {
-            if (this.timer) {
-              clearTimeout(this.timer)
+      this.FlowActionData(JSON.stringify(params)).then((response) => {
+        this.ToastShowEvent('完成提交')
+        this.GetInformCount().then(() => {
+          if (this.timer) {
+            clearTimeout(this.timer)
+          }
+          this.timer = setTimeout(() => {
+            if (this.formState === 'view') {
+              this.$router.push('/workinfos')
+            } else {
+              this.$router.back()
             }
-
-            this.timer = setTimeout(() => {
-              if (this.formState === 'view') {
-                this.$router.push('/workinfos')
-              } else {
-                this.$router.back()
-              }
-            }, 1000)
-          }).catch((e) => {
-            this.AlertShowEvent(e.message)
-          })
-        }
+          }, 1000)
+        }).catch((e) => {
+          this.AlertShowEvent(e.message)
+        })
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
       })
     },
     // 验证数据
@@ -236,22 +220,22 @@ export default {
         Current: this.query
       })
 
-      this.MinXinHttpFetch(FlowAction(JSON.stringify(params)), (response) => {
-        if (response.success) {
-          let value = response.data.value
+      this.FlowActionData(JSON.stringify(params)).then((response) => {
+        let value = response.data.value
 
-          this.Current = Object.assign({}, value.Current)
-          this.HistoryMind = value.HistoryMind.concat()
+        this.Current = Object.assign({}, value.Current)
+        this.HistoryMind = value.HistoryMind.concat()
 
-          if (value.DelegateItem) {
-            this.delegateItem = Object.assign({}, value.DelegateItem)
-            this.delegateItem = Object.assign({}, value.DelegateItem)
-            this.RootUserInfo = this.delegateItem.RootUserInfo
-            this.defaultUserList = this.delegateItem.UserList.concat()
-            this.UserList = [this.RootUserInfo].concat(this.delegateItem.UserList)
-            this.organizeData()
-          }
+        if (value.DelegateItem) {
+          this.delegateItem = Object.assign({}, value.DelegateItem)
+          this.delegateItem = Object.assign({}, value.DelegateItem)
+          this.RootUserInfo = this.delegateItem.RootUserInfo
+          this.defaultUserList = this.delegateItem.UserList.concat()
+          this.UserList = [this.RootUserInfo].concat(this.delegateItem.UserList)
+          this.organizeData()
         }
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
       })
     },
     // 人员选择完成后的的事件
@@ -271,16 +255,16 @@ export default {
         Current: Object.assign({}, this.Current)
       })
 
-      this.MinXinHttpFetch(FlowAction(JSON.stringify(params)), (response) => {
-        if (response.success) {
-          this.getDelegateData()
-        }
+      this.FlowActionData(JSON.stringify(params)).then(() => {
+        this.getDelegateData()
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
       })
     },
     // 点击事件backToRoot
     backToRootEvent () {
       if (this.currentMethod === 'Parallel') {
-        this.MixinAlertShowEvent('并行必须选择返回发起人')
+        this.AlertShowEvent('并行必须选择返回发起人')
         return false
       } else {
         this.backToRoot = !this.backToRoot
@@ -349,8 +333,15 @@ export default {
     },
     ...mapActions([
       'GetInformCount',
-      'AlertShowEvent'
+      'FlowActionData',
+      'AlertShowEvent',
+      'ToastShowEvent'
     ])
+  },
+  destroyed () {
+    if (this.timer) {
+      clearTimeout(this.timer)
+    }
   },
   components: {
     CheckIcon,
