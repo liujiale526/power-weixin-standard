@@ -96,11 +96,6 @@ export const commonComponentMixin = {
 
 // form表单的公共组件和方法
 export const formComponentMixin = {
-  data () {
-    return {
-      actionMenu: []
-    }
-  },
   methods: {
     // 日期格式化
     _formatDate (date) {

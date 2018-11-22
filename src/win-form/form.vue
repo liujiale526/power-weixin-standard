@@ -133,15 +133,11 @@
           </div>
         </div>
       </div>
-
-      <loading v-model="mx_isLoading"></loading>
-      <toast v-model="mx_toastShow" type="text" :time="mx_deleyTime">{{ afterSaveMsg }}</toast>
-      <alert v-model="mx_alertShow" @on-hide="MixinAlertHideEvent" :title="mx_alertTitle" :content="mx_message"></alert>
     </div>
   </transition>
 </template>
 <script type="text/ecmascript-6">
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 // 引入子表和通用相关组件
 import {
   commonChildTable,
@@ -151,18 +147,7 @@ import {
   FormRow
 } from 'components/index.js'
 
-// http api
-import {
-  FormLoad,
-  FormInit,
-  FormSave,
-  FormData,
-  FlowAction,
-  APIMessages,
-  Exec
-} from 'api/index.js'
-
-import { commonComponentMixin, formComponentMixin } from 'common/js/mixin.js'
+import { formComponentMixin } from 'common/js/mixin.js'
 import {
   formatFormAllConfig,
   formatFromDataToView,
@@ -177,14 +162,16 @@ import { Base64 } from 'js-base64'
 
 const DIRICTION_H = 'horizontal'
 const debug = process.env.NODE_ENV !== 'production'
+const UPDATESUCCESS = '更新数据完毕'
 
 export default {
   name: 'h5Form',
-  mixins: [commonComponentMixin, formComponentMixin],
+  mixins: [formComponentMixin],
   data () {
     return {
       currentIndex: 0,
       switches: [],
+      actionMenu: [],
       tabUnitWidth: 100,
       mainformData: {},
       KeyWord: '',
@@ -196,14 +183,7 @@ export default {
       },
       formAllConfig: {},
       keywordright: {},
-      workflowdata: {},
-      afterSaveMsg: '',
-      mx_isLoading: false,
-      mx_message: '',
-      mx_alertShow: false,
-      mx_alertTitle: '提示',
-      mx_toastShow: false,
-      mx_deleyTime: 1000
+      workflowdata: {}
     }
   },
   computed: {
@@ -239,8 +219,7 @@ export default {
     mainLoad () {
       this._FormInit(() => {
         this._FormMainLoad()
-
-        let formstate = this.routerParams.formstate
+        let { formstate } = this.routerParams
         if (formstate !== 'add') {
           this._FormData()
         }
@@ -266,22 +245,18 @@ export default {
 
       let params = organizeParams(obj)
 
-      this.MinXinHttpFetch(FormSave(params), (response) => {
-        if (response.success) {
-          if (!msg) {
-            this.afterSaveMsg = '保存数据完成'
-          } else {
-            this.afterSaveMsg = msg
-          }
-
-          this.mx_toastShow = true
-          if (callback) {
-            callback()
-          }
-          if (formstate === 'add') {
-            this.$router.back()
-          }
+      this.FormSaveData(params).then((response) => {
+        if (!msg) {
+          this.ToastShowEvent('保存数据完成')
+        } else {
+          this.ToastShowEvent(msg)
         }
+        callback && callback()
+        if (formstate === 'add') {
+          this.$router.back()
+        }
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
       })
     },
     // 从获取的配置信息赋予当前表单
@@ -302,7 +277,7 @@ export default {
 
       if (!this.routerParams.FromId) {
         this.$nextTick(() => {
-          this.MixinAlertShowEvent('openformid is ' + this.routerParams.FromId)
+          this.AlertShowEvent('openformid is ' + this.routerParams.FromId)
         })
       } else {
         let params = {
@@ -311,33 +286,30 @@ export default {
           FormState: formstate
         }
 
-        this.MinXinHttpFetch(FormInit(params), (response) => {
-          if (response.success) {
-            let obj = Object.assign({}, response.data)
-            this.formAllConfig = formatFormAllConfig(obj)
+        this.FormInitData(params).then((response) => {
+          let obj = Object.assign({}, response.data)
 
-            this.keywordright = this.formAllConfig.keywordright
-            this.workflowdata = this.formAllConfig.workflowdata
+          this.formAllConfig = formatFormAllConfig(obj)
+          this.keywordright = this.formAllConfig.keywordright
+          this.workflowdata = this.formAllConfig.workflowdata
 
-            let appconfig = this.formAllConfig.formconfig.appconfig
-
-            if (appconfig) {
-              this.KeyWord = appconfig.KeyWord
-              this.setFormDataFromConfig(appconfig)
-              if (callback) {
-                callback()
-              }
+          let appconfig = this.formAllConfig.formconfig.appconfig
+          if (appconfig) {
+            this.KeyWord = appconfig.KeyWord
+            this.setFormDataFromConfig(appconfig)
+            callback && callback()
+          } else {
+            let { FromId, formstate, Id } = this.routerParams
+            if (debug) {
+              this.$nextTick(() => {
+                this.AlertShowEvent('获取不到App的配置信息')
+              })
             } else {
-              let { FromId, formstate, Id } = this.routerParams
-              if (debug) {
-                this.$nextTick(() => {
-                  this.MixinAlertShowEvent('获取不到App的配置信息')
-                })
-              } else {
-                this.openPCForm(FromId, formstate, Id)
-              }
+              this.openPCForm(FromId, formstate, Id)
             }
           }
+        }).catch((e) => {
+          this.AlertShowEvent(e.message)
         })
       }
     },
@@ -381,46 +353,25 @@ export default {
         formstate: formstate
       }
 
-      this.MinXinHttpFetch(FormLoad(params), (response) => {
-        if (response.success) {
-          let statusField = this.formAllConfig.formconfig.config.joindata.statusfield
-          let value = response.data.value
-          let getData = JSON.parse(value)
-          let Status = getData[statusField]
+      this.FormLoadData(params).then((response) => {
+        let statusField = this.formAllConfig.formconfig.config.joindata.statusfield
+        let value = response.data.value
+        let getData = JSON.parse(value)
+        let Status = getData[statusField]
 
-          this.setFormStatusValue(Status)
+        this.setFormStatusValue(Status)
+        this.actionMenu = settingActionPermission(this.workflowdata, formstate, Status)
+        if (value || value !== '') {
+          let mainformData = formatFromDataToView(
+            this.formAllConfig.comboboxdata,
+            getData,
+            this.KeyWord
+          )
 
-          this.actionMenu = settingActionPermission(this.workflowdata, formstate, Status)
-          if (value || value !== '') {
-            let mainformData = formatFromDataToView(
-              this.formAllConfig.comboboxdata,
-              getData,
-              this.KeyWord
-            )
-
-            this.mainformData = Object.assign({}, mainformData)
-          }
+          this.mainformData = Object.assign({}, mainformData)
         }
-      })
-    },
-    // 获取额外的数据
-    _Exec (switchsPermission, mainformData, callback) {
-      let params = Object.assign({}, switchsPermission.condition.dataParams)
-      let field = switchsPermission.field
-
-      params.MethodParams[field] = mainformData[field]
-      this.MinXinHttpFetch(Exec(JSON.stringify(params)), (response) => {
-        if (response.success) {
-          let value = response.data.value
-          if (callback) {
-            callback(value)
-          }
-        } else {
-          if (callback) {
-            callback()
-          }
-          this.MixinAlertShowEvent(response.message)
-        }
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
       })
     },
     // 获取表单的所有子表信息
@@ -431,22 +382,22 @@ export default {
         extparams: ''
       }
 
-      this.MinXinHttpFetch(FormData(params), (response) => {
-        if (response.success) {
-          let getData = response.data.value
-          let childrenData = [...getData.children]
-          childrenData.forEach((item, index) => {
-            if (!item.values) {
-              item.values = []
-            }
+      this.FormDataChilds(params).then((response) => {
+        let getData = response.data.value
+        let childrenData = [...getData.children]
+        childrenData.forEach((item, index) => {
+          if (!item.values) {
+            item.values = []
+          }
 
-            this.switches.forEach((switchItem, switchIndex) => {
-              if (switchItem.KeyWord === item.KeyWord) {
-                switchItem.data = Object.assign({}, item)
-              }
-            })
+          this.switches.forEach((switchItem, switchIndex) => {
+            if (switchItem.KeyWord === item.KeyWord) {
+              switchItem.data = Object.assign({}, item)
+            }
           })
-        }
+        })
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
       })
     },
     // 走流程之前都要更新的数据
@@ -489,19 +440,15 @@ export default {
         }
       }
 
-      this.MinXinHttpFetch(APIMessages(JSON.stringify(upDateParams)), (response) => {
-        if (response.success) {
-          if (!msg) {
-            this.afterSaveMsg = '数据更新完成'
-          } else {
-            this.afterSaveMsg = msg
-          }
-
-          this.mx_toastShow = true
-          if (callback) {
-            callback()
-          }
+      this.UpDateFormData(JSON.stringify(upDateParams)).then(() => {
+        if (!msg) {
+          this.ToastShowEvent(UPDATESUCCESS)
+        } else {
+          this.ToastShowEvent(msg)
         }
+        callback && callback()
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
       })
     },
     // selectAction中的驱动事件
@@ -536,7 +483,7 @@ export default {
             path: '/forkflow/active',
             query: query
           })
-        }, '更新数据完毕')
+        }, UPDATESUCCESS)
       }
 
       // 执行同意
@@ -556,7 +503,7 @@ export default {
             path: '/forkflow/agree',
             query: query
           })
-        }, '更新数据完毕')
+        }, UPDATESUCCESS)
       }
 
       // 执行回收
@@ -573,12 +520,12 @@ export default {
             FlowOperate: 'GetBack'
           })
 
-          this.MinXinHttpFetch(FlowAction(JSON.stringify(params)), (response) => {
-            if (response.success) {
-              this.mainLoad()
-            }
+          this.FlowActionData(JSON.stringify(params)).then((response) => {
+            this.mainLoad()
+          }).catch((e) => {
+            this.AlertShowEvent(e.message)
           })
-        }, '更新数据完毕')
+        }, UPDATESUCCESS)
       }
 
       // 执行查看监控 不需要更新数据
@@ -609,7 +556,7 @@ export default {
             path: '/forkflow/return',
             query: query
           })
-        }, '更新数据完毕')
+        }, UPDATESUCCESS)
       }
 
       // 执行委派
@@ -627,7 +574,7 @@ export default {
             path: '/forkflow/delegate',
             query: query
           })
-        }, '更新数据完毕')
+        }, UPDATESUCCESS)
       }
 
       // 委派处理
@@ -645,7 +592,7 @@ export default {
             path: '/forkflow/delegateing',
             query: query
           })
-        }, '更新数据完毕')
+        }, UPDATESUCCESS)
       }
 
       // 终止
@@ -663,7 +610,7 @@ export default {
             path: '/forkflow/stop',
             query: query
           })
-        }, '更新数据完毕')
+        }, UPDATESUCCESS)
       }
 
       // 查看历史
@@ -696,7 +643,17 @@ export default {
       setFormStatus: 'SET_FORM_STATUS',
       setRouterParams: 'SET_ROUTER_PARAMS',
       setFormStatusValue: 'FORMSTATUSVALUE'
-    })
+    }),
+    ...mapActions([
+      'FormInitData',
+      'FormLoadData',
+      'FormSaveData',
+      'FormDataChilds',
+      'FlowActionData',
+      'UpDateFormData',
+      'AlertShowEvent',
+      'ToastShowEvent'
+    ])
   },
   components: {
     FormRow,

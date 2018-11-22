@@ -27,10 +27,64 @@ import {
   FlowAction,
   MenuWidget,
   FormInit,
-  FormSave
+  FormSave,
+  FormLoad,
+  FormData,
+  APIMessages
 } from 'api'
 
 // 窗体和表单相关
+// 在走审批流之前 更新数据信息
+export const UpDateFormData = function ({commit}, str) {
+  return new Promise((resolve, reject) => {
+    commit(types.SHOWLOADING, true)
+    APIMessages(str).then((res) => {
+      commit(types.SHOWLOADING, false)
+      if (res.success) {
+        resolve(res)
+      } else {
+        reject(getError(res.message))
+      }
+    }).catch((e) => {
+      commit(types.SHOWLOADING, false)
+      reject(e.message)
+    })
+  })
+}
+// 获取表单中所有子表数据
+export const FormDataChilds = function ({commit}, params) {
+  return new Promise((resolve, reject) => {
+    commit(types.SHOWLOADING, true)
+    FormData(params).then((res) => {
+      commit(types.SHOWLOADING, false)
+      if (res.success) {
+        resolve(res)
+      } else {
+        reject(getError(res.message))
+      }
+    }).catch((e) => {
+      commit(types.SHOWLOADING, false)
+      reject(e)
+    })
+  })
+}
+// 获取表单主表信息
+export const FormLoadData = function ({commit}, params) {
+  return new Promise((resolve, reject) => {
+    commit(types.SHOWLOADING, true)
+    FormLoad(params).then((res) => {
+      commit(types.SHOWLOADING, false)
+      if (res.success) {
+        resolve(res)
+      } else {
+        reject(getError(res.message))
+      }
+    }).catch((e) => {
+      commit(types.SHOWLOADING, false)
+      reject(e)
+    })
+  })
+}
 // 保存或者删除信息
 export const FormSaveData = function ({commit}, params) {
   return new Promise((resolve, reject) => {
