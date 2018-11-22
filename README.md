@@ -9,7 +9,7 @@
 1. 如果网速良好，并且可以翻墙，可以执行 npm install。
 2. 如果npm安装报错，可以先全局安装npm install cnpm --g,然后执行cnpm install。
 3. 如果你喜欢使用[yarn](https://yarn.bootcss.com)，你也可以全局安装yarn,然后执行yarn就可以了。
-4. 开发环境中端口号为8080， 确保你本机8080端口不被占用，否则会抛错 
+4. 开发环境中端口号为8080， 确保你本机8080端口不被占用，否则会抛错
 5. localhost:8080 npm run dev / cnpm run dev / yarn dev / yarn start
 6. 构建压缩好的生产文件npm run build / cnpm run build / yarn build
 7. 构建压缩好的生产文件并且生成分析报表npm run build --report
@@ -56,3 +56,25 @@
 	        "format": ""// 类型，一般给一个""就可以了，也可以不加
 	    }
 	}
+
+#### 以上窗体配置注意事项
+1. tableListType的属性值有
+	- 默认风格:"default"
+	- 简约风格:"contractStyle"
+	- 靓丽风格:"beauty"
+	- Table风格:"table"
+	- 豪华风格: "luxury"
+	- 豪华简约 "luxuryBeauty"
+2. winTitle属性：如果想看到标题，这里最好要配置一下，如果不配置，默认的是窗体
+
+3. title,left,center,right这个四个属性的相关属性：
+	- title: 字段名称
+	- field: 要显示的字段
+	- format: 数据类型 目前支持格式如下：
+		1. "": 默认为"text" 代表的是text类型
+		2. "n2": 显示千分位保留两位小数点，一般是金额字段的显示格式
+		3. "number": number类型的格式，不显示千分位 保留两位小数点
+		4. "percent": 百分比格式 显示的结果是 (x * 100).00 + "%"
+		5. "money": 显示千分位保留两位小数点，一般是金额字段的显示格式 和"n2"是同一种
+		6. "yyyy-MM-dd": 显示为日期格式 XXXX年XX月XX日
+		7. "rate": 汇率 小数点后面有8位
