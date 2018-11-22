@@ -169,10 +169,6 @@
         :subParams="positionUserParams"
         @complete="completeByDraft"
       ></position-user-list>
-
-      <loading v-model="mx_isLoading"></loading>
-      <toast v-model="mx_toastShow" type="text" :time="mx_deleyTime">{{ afterSaveMsg }}</toast>
-      <alert v-model="mx_alertShow" @on-hide="MixinAlertHideEvent" :title="mx_alertTitle" :content="mx_message"></alert>
     </div>
   </transition>
 </template>
@@ -182,21 +178,17 @@ import LineBreak from 'base/line/line.vue'
 import PositionUserList from 'base/position-user-list/position-user-list.vue'
 import PersonSelectList from 'base/person-select-list/person-select-list.vue'
 import { EFlowOperate, EFlowLineType } from 'common/js/config.js'
-import { commonComponentMixin } from 'common/js/mixin.js'
-import { FlowAction } from 'api/index.js'
 import { XTextarea, Group, InlineXSwitch } from 'vux'
 import CheckIcon from 'base/check-icon/check-icon.vue'
 import { createGuid } from 'common/js/Util.js'
 
 export default {
   name: 'workflow',
-  mixins: [commonComponentMixin],
   data () {
     return {
       selectType: 'single',
       formState: '',
       query: {},
-      afterSaveMsg: '',
       WorkFlowList: [],
       WorkFlow: {},
       currentWorkFlow: null,
@@ -214,13 +206,7 @@ export default {
         users: [],
         NodeCode: ''
       },
-      SelectPeople: {},
-      mx_isLoading: false,
-      mx_message: '',
-      mx_alertShow: false,
-      mx_alertTitle: '提示',
-      mx_toastShow: false,
-      mx_deleyTime: 1000
+      SelectPeople: {}
     }
   },
   mounted () {
@@ -291,12 +277,12 @@ export default {
       let selectedNode = this.getSelectedNode()
 
       if (selectedNode.error !== '') {
-        this.MixinAlertShowEvent(selectedNode.error)
+        this.AlertShowEvent(selectedNode.error)
         return false
       }
 
       if (this.IsMindMustInput && this.MindInfo === '') {
-        this.MixinAlertShowEvent('审批意见不许为空')
+        this.AlertShowEvent('审批意见不许为空')
         return false
       }
 
@@ -315,29 +301,25 @@ export default {
         VoteValue: ''
       })
 
-      this.MinXinHttpFetch(FlowAction(JSON.stringify(params)), (response) => {
-        if (response.success) {
-          this.afterSaveMsg = '完成提交'
-          this.mx_toastShow = true
+      this.FlowActionData(JSON.stringify(params)).then((response) => {
+        this.ToastShowEvent('完成提交')
+        this.GetInformCount().then(() => {
+          if (this.timer) {
+            clearTimeout(this.timer)
+          }
 
-          this.GetInformCount().then(() => {
-            if (this.timer) {
-              clearTimeout(this.timer)
+          this.timer = setTimeout(() => {
+            if (this.formState === 'view') {
+              this.$router.push('/workinfos')
+            } else {
+              this.$router.back()
             }
-
-            this.timer = setTimeout(() => {
-              if (this.formState === 'view') {
-                this.$router.push('/workinfos')
-              } else {
-                this.$router.back()
-              }
-            }, 1000)
-          }).catch((e) => {
-            this.AlertShowEvent(e)
-          })
-        } else {
-          this.MixinAlertShowEvent(response.message)
-        }
+          }, 1000)
+        }).catch((e) => {
+          this.AlertShowEvent(e)
+        })
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
       })
     },
     // 抄送人员的点击事件
@@ -349,7 +331,7 @@ export default {
         NextNodeList[a].CanSelectCopyUsers[b].checked =
         !NextNodeList[a].CanSelectCopyUsers[b].checked
       } else {
-        this.MixinAlertShowEvent(`请先选择${this.NextNodeList[a].NodeName}节点`)
+        this.AlertShowEvent(`请先选择${this.NextNodeList[a].NodeName}节点`)
       }
 
       this.NextNodeList = [...NextNodeList]
@@ -363,7 +345,7 @@ export default {
 
       if (lineChecked) {
         if (SelectUserMode === 'SelectAllAndDisabled') {
-          this.MixinAlertShowEvent('你没有修改权限')
+          this.AlertShowEvent('你没有修改权限')
           return false
         }
 
@@ -380,7 +362,7 @@ export default {
           })
         }
       } else {
-        this.MixinAlertShowEvent(`请先选择${NextNodeList[a].NodeName}节点`)
+        this.AlertShowEvent(`请先选择${NextNodeList[a].NodeName}节点`)
       }
 
       this.NextNodeList = [...NextNodeList]
@@ -393,7 +375,7 @@ export default {
       let selectUserMode = NextNodeList[index].SelectUserMode
 
       if (selectNodeMode === 'SelectedAndDisabled') {
-        this.MixinAlertShowEvent('禁止取消')
+        this.AlertShowEvent('禁止取消')
         return false
       }
 
@@ -472,7 +454,7 @@ export default {
         SubOperate: 'ReadSendNodeList'
       }
 
-      this.MinXinHttpFetch(FlowAction(JSON.stringify(params)), (response) => {
+      this.FlowActionData(JSON.stringify(params)).then((response) => {
         let value = response.data.value
         let NextNodeList = []
         let NodeList = []
@@ -487,6 +469,8 @@ export default {
         this.current = Object.assign({}, value.Current)
         this.NextNodeList = this.formatNextNodeList(NextNodeList)
         this.NodeList = NodeList
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
       })
     },
     // 组织数据，添加权限
@@ -563,7 +547,7 @@ export default {
       let selectPeople = this.SelectPeople
       if (!selectPeople.IsByDraft) {
         this.currentStop = 'peopleSelect'
-        this.MixinAlertShowEvent('不需要返回上一步')
+        this.AlertShowEvent('不需要返回上一步')
       } else {
         this.currentStop = step
       }
@@ -589,7 +573,7 @@ export default {
         SequeID: this.query.SequeID
       }
 
-      this.MinXinHttpFetch(FlowAction(JSON.stringify(params)), (response) => {
+      this.FlowActionData(JSON.stringify(params)).then((response) => {
         let value = response.data.value
         let WorkFlowList = []
 
@@ -623,6 +607,8 @@ export default {
         this.timer = setTimeout(() => {
           this.toNextStep('peopleSelect')
         }, 300)
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
       })
     },
     // 选择一条流程 当前组件调用
@@ -758,8 +744,15 @@ export default {
     },
     ...mapActions([
       'GetInformCount',
-      'AlertShowEvent'
+      'FlowActionData',
+      'AlertShowEvent',
+      'ToastShowEvent'
     ])
+  },
+  destroyed () {
+    if (this.timer) {
+      clearTimeout(this.timer)
+    }
   },
   components: {
     PersonSelectList,
@@ -774,6 +767,7 @@ export default {
 </script>
 <style lang="less" rel="stylesheet/less">
   @import "~common/styles/mixin.less";
+  @import "~common/styles/colors.less";
 
   .work-node-select {
     position: fixed;
@@ -828,8 +822,8 @@ export default {
             .toggle-switch {
               .positionCenter();
               .cube-switch-ui {
-                background-color: #09BB07;
-                border-color: #09BB07;
+                background-color: @mainColor;
+                border-color: @mainColor;
               }
             }
           }
