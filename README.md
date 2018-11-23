@@ -27,6 +27,7 @@
 #### 二.配置企业应用参数 ####
 1. 进入企业微信后台，进入企业应用——自建应用，点击新建应用，创建应用，应用名称会出现在微信通讯录，请客户想好名称。![应用创建](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/yiyongcreate.png)
 2. 创建应用后，会生成应用的AgentId和Secret码，复制出来，后面配置会用到。点击编辑按钮，可以编辑该应用的可见范围，可以选择人员或部门。![提取创建应用的信息](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/yiyongmsg.png)
+3. 为应用设置可信域名。点击“网页授权及JS-SDK”，输入PMS站点域名，点击申请校验按钮。注意，此处一定要是域名才行，IP地址是不行的。![设置可信域名](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/getkey.png)
 
 
 # 在开发平台配置文档说明
