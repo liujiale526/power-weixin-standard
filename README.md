@@ -16,7 +16,7 @@
 
 # 在开发平台配置文档说明
 
-## 窗体文件配置 ##
+## [窗体文件配置](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/json/window.json "窗体文件配置") (窗体配置文档案例 click the blue fonts)##
 
 	{
 	    "KeyWord": "PS_IncomeContract", // (必填)当前窗体的KeyWord
@@ -92,7 +92,7 @@
 ![](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/window.png)
 
 
-## 表单的配置 ##
+## ![表单的配置](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/json/form.json, "表单的配置案例"  "表单的配置案例 click the blue fonts") ##
 
 	{
 		"print": "false",(可填)这个属性暂时没用到
