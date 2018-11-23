@@ -22,7 +22,7 @@
 #### 开通企业微信 ####
 1. 目前企业微信与原企业号已经合并，登录[企业微信官网](https://work.weixin.qq.com/ "企业微信官网") 让客户自行注册即可。年审费用目前是300元/年。 ![企业微信登录页](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/weixinlogin.png)
 2. 注册成功后，会自动生成企业CorpId，记录下来，需要在后面PMS应用站点配置![企业应用门户](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/yiyong.png)
-
+3. 导入通讯录。在通讯录菜单下，可以创建部门，批量导入成员，并邀请用户关注，可通过短信或邮件或微信号批量邀请关注。![通讯录](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/users.png)
 
 # 在开发平台配置文档说明
 
