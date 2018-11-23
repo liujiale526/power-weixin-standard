@@ -14,6 +14,12 @@
 6. 构建压缩好的生产文件npm run build / cnpm run build / yarn build
 7. 构建压缩好的生产文件并且生成分析报表npm run build --report
 
+# 项目说明
+
+1. 当窗体中没有配置信息的时候，会出现报错行为，此种现象属于正常
+2. 当表单中没有配置信息的时候，页面会跳转PC的对应的表单页面
+3. 表单中的附件，当在开发环境或者在PC端开发对应页面的时候，会出现报错行为，此行为属于正常，在微信上打开就正常了
+
 # 在开发平台配置文档说明
 
 ## [窗体文件配置](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/json/window.json "窗体文件配置") (窗体配置文档案例 click the blue fonts) ##
