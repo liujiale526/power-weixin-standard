@@ -47,7 +47,13 @@ public class Reg : IHttpHandler
                         context.Response.Redirect("https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + wc.QY.AppId + "&redirect_uri=" + path + "&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect");
                     }
                 }
-                else context.Response.Write("错误:HumanBO(" + HumId + "),<a href='/weixin3.0/index.html#/login'>返回</a>");
+                else
+                {
+                    if (HumId.ToUpper() == "AD000000-0000-0000-0000-000000000000")//admin账户如果没有人员信息就跳过
+                        context.Response.Redirect("/weixin3.0/index.html");
+                    else
+                        context.Response.Write("错误:HumanBO(" + HumId + "),<a href='/weixin3.0/index.html#/login'>返回</a>");
+                }
             }
             else context.Response.Write("错误:hum(" + context.Request["hum"] + "),<a href='/weixin3.0/index.html#/login'>返回</a>");
         }
