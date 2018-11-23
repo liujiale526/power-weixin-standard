@@ -263,4 +263,10 @@
 	- "combobox": 下拉框类型
 	- "textarea": 多行文本类型
 
+#### 表单配置之后的样式图 ####
+![](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/form1.png)
+![](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/form2.png)
+![](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/form3.png)
+![](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/form4.png)
+
 ......持续更新中
