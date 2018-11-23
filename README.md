@@ -269,4 +269,7 @@
 ![](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/form3.png)
 ![](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/form4.png)
 
-......持续更新中
+
+# 微信企业号最终的效果图
+
+
