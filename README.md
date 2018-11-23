@@ -92,4 +92,143 @@
 ![](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/window.png)
 
 
-......持续更新中，敬请期待
+## 表单的配置 ##
+
+	{
+	  "print": "false",
+	  "comment": true,
+	  "report": true,
+	  "fileAttach": true,
+	  "type": "form",
+		"KeyWord": "PS_IncomeContract",
+		"idfield": "Id",
+		"swhere": "",
+		"name": "基本信息",
+		"formTitle": "合同表单",
+		"controls": [{
+			"field": "ContractCode",
+			"title": "合同编号",
+			"format": "",
+			"readonly": false,
+			"placeholder": "请输入合同编号"
+		}, {
+			"field": "ContractName",
+			"title": "合同名称",
+			"format": "",
+			"readonly": false,
+			"placeholder": "请输入合同名称"
+		}, {
+			"field": "ContractType",
+			"title": "合同类型",
+			"format": "",
+			"readonly": false,
+			"placeholder": "请输入合同类型"
+		}, {
+			"field": "ContractForm",
+			"title": "合同形式",
+			"format": "",
+			"readonly": false,
+			"placeholder": "请输入合同形式"
+		}, {
+			"field": "ContractAmount",
+			"title": "合同金额",
+			"format": "n2",
+			"readonly": false,
+			"placeholder": "请输入合同金额"
+		}, {
+			"field": "ChangeAmount",
+			"title": "变更金额",
+			"format": "n2",
+			"readonly": false,
+			"placeholder": "请输入变更金额"
+		}, {
+			"field": "FinalContractAmount",
+			"title": "最终金额",
+			"format": "n2",
+			"readonly": false,
+			"placeholder": "请输入最终金额"
+		}, {
+			"field": "CurrencyType",
+			"title": "币种",
+			"format": "",
+			"readonly": false,
+			"placeholder": "请输入币种"
+		}, {
+			"field": "ProductType",
+			"title": "产品类型",
+			"format": "",
+			"readonly": false,
+			"placeholder": "请输入产品类型"
+		}, {
+			"field": "ReviewWay",
+			"title": "评审方式",
+			"format": "",
+			"readonly": false,
+			"placeholder": "请输入评审方式"
+		}, {
+			"field": "ReviewDate",
+			"title": "评审日期",
+			"format": "yyyy-MM-dd",
+			"readonly": false,
+			"placeholder": "请输入评审日期"
+		}, {
+			"field": "SignedDate",
+			"title": "签订日期",
+			"format": "yyyy-MM-dd",
+			"readonly": false,
+			"placeholder": "请输入签订日期"
+		}, {
+			"field": "Status",
+			"title": "状态",
+			"format": "combobox",
+			"readonly": false,
+			"placeholder": "请输入状态"
+	  }],
+	  "children": [{
+			"KeyWord": "PS_IncomeContract_PayNodes",
+			"tableListType": "default",
+			"idfield": "Id",
+			"type": "grid",
+			"name": "付款节点",
+			"title": {
+				"title": "节点名称",
+				"field": "PayNodes",
+				"format": ""
+			},
+			"left": {
+				"title": "收款类型",
+				"field": "PayType",
+				"format": "combobox"
+			},
+			"center": {
+				"title": "收款金额",
+				"field": "PayAmount",
+				"format": "n2"
+			},
+			"tableShowField": [{
+				"field": "PayNodes",
+				"title": "节点名称",
+				"format": "",
+				"readonly": false,
+				"placeholder": "请输入节点名称"
+			}, {
+				"field": "PayType",
+				"title": "收款类型",
+				"format": "combobox",
+				"readonly": false,
+				"placeholder": "请输入收款类型"
+			}, {
+				"field": "PayAmount",
+				"title": "收款金额",
+				"format": "n2",
+				"readonly": false,
+				"placeholder": "请输入收款金额"
+			}, {
+				"field": "PayDescription",
+				"title": "描述",
+				"format": "",
+				"readonly": false,
+				"placeholder": "请输入描述"
+			}]
+		}]
+	}
