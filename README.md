@@ -33,6 +33,10 @@
 #### 三.配置PMS站点参数 ####
 将上面提到的几个参数复制到如下图位置。![在项目上配置](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/configpc.png)注意:站点外网访问地址必须有http://前缀，不可省略，不然安卓消息推送会有问题。到此步骤，已经可以实现微信端接收PMS推送的消息。若要进一步在微信端配置其它模块，继续往后。
 
+#### 四.输出微信端模块 ####
+1. 输出移动端菜单 ![输入菜单](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/ouyputmenu.png)
+2. 配置权限，同web端 ![配置菜单权限](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/configright.png)
+
 
 # 在开发平台配置文档说明
 ## [窗体文件配置](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/json/window.json "窗体文件配置") (窗体配置文档案例 click the blue fonts) ##
