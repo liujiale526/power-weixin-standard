@@ -198,28 +198,29 @@
 				"placeholder": "请输入状态"
 			}
 		],
-		"children": [{
-			"KeyWord": "PS_IncomeContract_PayNodes",
-			"tableListType": "default",
-			"idfield": "Id",
-			"type": "grid",
-			"name": "付款节点",
-			"title": {
+		"children": [{//(必填) 表单中的子表 记住这里是个数组，如果没有子表 默认给一个空的数组就可以了
+			"KeyWord": "PS_IncomeContract_PayNodes",//(必填) 子表的关键字
+			"tableListType": "default",//(可填) 子表列表显示的样式 和上面窗体中的tableListType值一样 具体的参考窗体的tableListType属性
+			"idfield": "Id",(必填，目前程序中暂时没有使用到此属性，但是后面会用到) 子表的主键
+			"type": "grid",//(可填，暂时没用到此属性，后面会用到) 子表的类表的类型
+			"name": "付款节点",// (必填) 表的名称 字数最好控制在4-6个字
+			"title": {// 具体可以参考窗体的此属性
 				"title": "节点名称",
 				"field": "PayNodes",
 				"format": ""
 			},
-			"left": {
+			"left": {// 具体可以参考窗体的此属性
 				"title": "收款类型",
 				"field": "PayType",
 				"format": "combobox"
 			},
-			"center": {
+			"center": {// 具体可以参考窗体的此属性
 				"title": "收款金额",
 				"field": "PayAmount",
 				"format": "n2"
 			},
-			"tableShowField": [{
+			// 上面有 title,left, center三个属性，实际上还有right,tag属性， tag属性一般在子表中不建议添加， 对于title,left, center, right这个四个属性，如果不想显示可以不添加 一旦添加 要严格按照标准格式填写
+			"tableShowField": [{// 子表要显示的字段 和 上面表单中的主表属性 controls 一样的功能 但是子表的字段必须是tableShowField，下面的属性参考主表controls里面的配置项，这里不再重述
 				"field": "PayNodes",
 				"title": "节点名称",
 				"format": "",
@@ -246,5 +247,9 @@
 			}]
 		}]
 	}
+
+
+#### 表单配置注意事项 ####
+
 
 ......持续更新中
