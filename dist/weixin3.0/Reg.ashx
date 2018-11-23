@@ -20,7 +20,13 @@ public class Reg : IHttpHandler
                     bo.Save(System.ComponentModel.DataObjectMethodType.Update);
                     context.Response.Redirect("/weixin3.0/index.html");
                 }
-                else context.Response.Write("错误:HumanBO(" + HumId + "),<a href='/weixin3.0/index.html#/login'>返回</a>");
+                else
+                {
+                    if (HumId.ToUpper() == "AD000000-0000-0000-0000-000000000000")//admin账户如果没有人员信息就跳过
+                        context.Response.Redirect("/weixin3.0/index.html");
+                    else
+                        context.Response.Write("错误:HumanBO(" + HumId + "),<a href='/weixin3.0/index.html#/login'>返回</a>");
+                }
             }
             else context.Response.Write("错误:" + obj.errcode + "/" + obj.errmsg + ",<a href='/weixin3.0/index.html#/login'>返回</a>");
         }
