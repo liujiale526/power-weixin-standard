@@ -28,7 +28,11 @@
 1. 进入企业微信后台，进入企业应用——自建应用，点击新建应用，创建应用，应用名称会出现在微信通讯录，请客户想好名称。![应用创建](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/yiyongcreate.png)
 2. 创建应用后，会生成应用的AgentId和Secret码，复制出来，后面配置会用到。点击编辑按钮，可以编辑该应用的可见范围，可以选择人员或部门。![提取创建应用的信息](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/yiyongmsg.png)
 3. 为应用设置可信域名。点击“网页授权及JS-SDK”，输入PMS站点域名，点击申请校验按钮。注意，此处一定要是域名才行，IP地址是不行的。![设置可信域名](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/getkey.png) 校验完成后，会产生一个文档，下载后放到PMS站点根目录下。 ![获取校验文档](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/keytext.png)
-4. 配置菜单，进入应用，点击自定义菜单，为应用配置默认菜单。![配置菜单](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/configmenu.png) 目前PowerM3提供了一个默认菜单。![查看菜单](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/seemenu.png)![编辑菜单](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/editmenu.png)
+4. 配置菜单，进入应用，点击自定义菜单，为应用配置默认菜单。![配置菜单](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/configmenu.png) 目前PowerM3提供了一个默认菜单。![查看菜单](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/seemenu.png)![编辑菜单](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/editmenu.png)对应的地址分别如下，将域名替换即可（注意是 weixin3.0，以前在用老版本的用户也可以替换成新版本，改这个地址就可以了）账号绑定：http://xxxx.xxxxx.xxxx:9508/weixin3.0/index.html/#/login
+
+#### 三.配置PMS站点参数 ####
+将上面提到的几个参数复制到如下图位置。![在项目上配置](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/configpc.png)注意:站点外网访问地址必须有http://前缀，不可省略，不然安卓消息推送会有问题。到此步骤，已经可以实现微信端接收PMS推送的消息。若要进一步在微信端配置其它模块，继续往后。
+
 
 # 在开发平台配置文档说明
 ## [窗体文件配置](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/json/window.json "窗体文件配置") (窗体配置文档案例 click the blue fonts) ##
