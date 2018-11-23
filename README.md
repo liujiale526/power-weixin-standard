@@ -95,16 +95,16 @@
 ## 表单的配置 ##
 
 	{
-		"print": "false",
-		"comment": true,
-		"report": true,
-		"fileAttach": true,
-		"type": "form",
-		"KeyWord": "PS_IncomeContract",
-		"idfield": "Id",
-		"swhere": "",
-		"name": "基本信息",
-		"formTitle": "合同表单",
+		"print": "false",(可填)这个属性暂时没用到
+		"comment": true,//(可填)是否启用表单的评论模块 true启用， false或者不填为禁用
+		"report": true,//(可填)是否启用表单的报表模块 true启用， false或者不填为禁用
+		"fileAttach": true,//(可填)是否启用表单的附件模块 true启用， false或者不填为禁用
+		"type": "form",(可填)这个属性暂时没用到
+		"KeyWord": "PS_IncomeContract",// 表单主表的关键字
+		"idfield": "Id",// (必填，不过暂时没用用到此属性)表单主表的主键字段 一般为Id
+		"swhere": "",// where条件，暂时没用到
+		"name": "基本信息",// 主表要显示的名称 一般为基本信息
+		"formTitle": "合同表单",// 表单的标题，最好加上，默认是表单
 		"controls": [{
 				"field": "ContractCode",
 				"title": "合同编号",
