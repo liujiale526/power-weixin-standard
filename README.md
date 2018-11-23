@@ -92,7 +92,7 @@
 ![](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/window.png)
 
 
-## ![表单的配置](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/json/form.json)  ##
+## [表单的配置](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/json/form.json)  ##
 
 	{
 		"print": "false",(可填)这个属性暂时没用到
