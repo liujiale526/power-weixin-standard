@@ -1,0 +1,39 @@
+{
+  "KeyWord": "PS_IncomeContract",
+  "idfield": "Id",
+  "swhere": "",
+  "size": "10",
+  "type": "grid",
+  "winTitle": "合同登记",
+  "tableListType": "default",
+  "title": {
+    "title": "合同名称",
+    "field": "ContractName",
+    "format": ""
+  },
+  "left": {
+    "title": "合同编号",
+    "field": "ContractCode",
+    "format": ""
+  },
+  "center": {
+    "title": "最终金额",
+    "field": "FinalContractAmount",
+    "format": "n2"
+  },
+  "right": {
+    "title": "签订日期",
+    "field": "SignedDate",
+    "format": "yyyy-MM-dd"
+  },
+  "tag": {
+    "title": "状态",
+    "field": "Status",
+    "format": "combobox"
+  },
+  "search": {
+    "title": "请输入合同名称",
+    "field": "ContractName",
+    "format": ""
+  }
+}
