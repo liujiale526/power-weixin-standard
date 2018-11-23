@@ -105,12 +105,12 @@
 		"swhere": "",// where条件，暂时没用到
 		"name": "基本信息",// 主表要显示的名称 一般为基本信息
 		"formTitle": "合同表单",// 表单的标题，最好加上，默认是表单
-		"controls": [{
-				"field": "ContractCode",
-				"title": "合同编号",
-				"format": "",
-				"readonly": false,
-				"placeholder": "请输入合同编号"
+		"controls": [{//(必填)主表中要显示的字段 记住这是一个数组
+				"field": "ContractCode",//(必填) 显示字段
+				"title": "合同编号",//(必填) 显示字段名称
+				"format": "",// (可填)数据类型 （在下方会详细解释这些类型）
+				"readonly": false,// (可填)只读类型 true or false
+				"placeholder": "请输入合同编号"// (可填)对应控制器的placeholder
 			},
 			{
 				"field": "ContractName",
@@ -245,3 +245,5 @@
 			}]
 		}]
 	}
+
+......持续更新中
