@@ -100,12 +100,12 @@
 	  "report": true,
 	  "fileAttach": true,
 	  "type": "form",
-		"KeyWord": "PS_IncomeContract",
-		"idfield": "Id",
-		"swhere": "",
-		"name": "基本信息",
-		"formTitle": "合同表单",
-		"controls": [{
+	  "KeyWord": "PS_IncomeContract",
+	  "idfield": "Id",
+	  "swhere": "",
+	  "name": "基本信息",
+	  "formTitle": "合同表单",
+	  "controls": [{
 			"field": "ContractCode",
 			"title": "合同编号",
 			"format": "",
