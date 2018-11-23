@@ -15,10 +15,16 @@
 7. 构建压缩好的生产文件并且生成分析报表npm run build --report
 
 # 项目说明
+#### 微信应用使用的前提 ####
+1. 把微信模块的补丁更新到项目中去
+2. 在微信企业号官网注册相关应用(下面会有详细的步奏)
+3. 把本项目中的dist文件夹下的weixin3.0拷贝到项目的跟目录下面
+
 #### 关于一些报错问题 ####
 1. 当窗体中没有配置信息的时候，会出现报错行为，此种现象属于正常
 2. 当表单中没有配置信息的时候，页面会跳转PC的对应的表单页面
 3. 表单中的附件，当在开发环境或者在生产环境的PC端浏览器打开对应页面的时候，会出现报错行为，此行为属于正常，在微信上打开就正常了
+
 #### 一.开通企业微信 ####
 1. 目前企业微信与原企业号已经合并，登录[企业微信官网](https://work.weixin.qq.com/ "企业微信官网") 让客户自行注册即可。年审费用目前是300元/年。 ![企业微信登录页](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/weixinlogin.png)
 2. 注册成功后，会自动生成企业CorpId，记录下来，需要在后面PMS应用站点配置![企业应用门户](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/yiyong.png)
