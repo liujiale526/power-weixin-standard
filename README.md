@@ -25,6 +25,9 @@
 2. 当表单中没有配置信息的时候，页面会跳转PC的对应的表单页面
 3. 表单中的附件，当在开发环境或者在生产环境的PC端浏览器打开对应页面的时候，会出现报错行为，此行为属于正常，在微信上打开就正常了
 
+#### 关于微信项目拓展功能的问题 ####
+假如客户想添加一下其他功能，可以在本项目的项目门户中自建相关的功能模块，项目门户中嵌入了一个iframe 链接指向/weixin3.0/static/html/index.html 可以在这个.html文件中构建自定义的功能模块
+
 #### 一.开通企业微信 ####
 1. 目前企业微信与原企业号已经合并，登录[企业微信官网](https://work.weixin.qq.com/ "企业微信官网") 让客户自行注册即可。年审费用目前是300元/年。 ![企业微信登录页](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/weixinlogin.png)
 2. 注册成功后，会自动生成企业CorpId，记录下来，需要在后面PMS应用站点配置![企业应用门户](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/yiyong.png)
