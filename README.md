@@ -190,7 +190,7 @@
 			  "format": "yyyy-MM-dd",
 			  "readonly": false,
 			  "placeholder": "请输入签订日期"
-		   }, 
+		   },
 		   {
 			  "field": "Status",
 			  "title": "状态",
