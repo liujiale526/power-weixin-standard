@@ -272,4 +272,12 @@
 
 # 微信企业号最终的效果图
 
-
+![登录页](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/login.png)
+![业务中心](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/business.png)
+![个人中心](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/my.png)
+![项目中心](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/project.png)
+![修改密码](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/changepass.png)
+![项目切换](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/changeproject.png)
+![设置窗体和子表列表显示的样式](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/tablestyle.png)
+![个人信息详情](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/userinfo.png)
+![审批列表](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/workflow.png)
