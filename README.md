@@ -290,7 +290,7 @@
 	- "n2": 加千分位，保留两位小数点
 	- "rate": 汇率类型，一般指币种之间的汇率，小数点之后是8位
 	- "percent": 百分比类型 这里显示不带%,最好在对应的title属性里面添加%,提示一下客户
-	- "checkBox"： checkBox类型值一些选择框，一般对应的字段名为"1" or "0", "1" checkBox勾选， "0"则不选
+	- "checkBox"： checkBox类型值一些选择框，一般对应的字段值为"1" or "0", "1" checkBox勾选， "0"则不选
 	- "yyyy-MM-dd": 日期类型
 	- "combobox": 下拉框类型
 	- "textarea": 多行文本类型
