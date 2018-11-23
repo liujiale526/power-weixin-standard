@@ -19,13 +19,16 @@
 1. 当窗体中没有配置信息的时候，会出现报错行为，此种现象属于正常
 2. 当表单中没有配置信息的时候，页面会跳转PC的对应的表单页面
 3. 表单中的附件，当在开发环境或者在生产环境的PC端浏览器打开对应页面的时候，会出现报错行为，此行为属于正常，在微信上打开就正常了
-#### 开通企业微信 ####
+#### 一.开通企业微信 ####
 1. 目前企业微信与原企业号已经合并，登录[企业微信官网](https://work.weixin.qq.com/ "企业微信官网") 让客户自行注册即可。年审费用目前是300元/年。 ![企业微信登录页](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/weixinlogin.png)
 2. 注册成功后，会自动生成企业CorpId，记录下来，需要在后面PMS应用站点配置![企业应用门户](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/yiyong.png)
 3. 导入通讯录。在通讯录菜单下，可以创建部门，批量导入成员，并邀请用户关注，可通过短信或邮件或微信号批量邀请关注。![通讯录](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/users.png)
 
-# 在开发平台配置文档说明
+#### 二.配置企业应用参数 ####
+1. 进入企业微信后台，进入企业应用——自建应用，点击新建应用，创建应用，应用名称会出现在微信通讯录，请客户想好名称。![应用创建](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/yiyongcreate.png)
 
+
+# 在开发平台配置文档说明
 ## [窗体文件配置](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/json/window.json "窗体文件配置") (窗体配置文档案例 click the blue fonts) ##
 
 	{
