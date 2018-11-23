@@ -20,7 +20,7 @@
 2. 当表单中没有配置信息的时候，页面会跳转PC的对应的表单页面
 3. 表单中的附件，当在开发环境或者在生产环境的PC端浏览器打开对应页面的时候，会出现报错行为，此行为属于正常，在微信上打开就正常了
 #### 开通企业微信 ####
-1. 目前企业微信与原企业号已经合并，登录[企业微信官网](https://work.weixin.qq.com/ "企业微信官网")
+1. 目前企业微信与原企业号已经合并，登录[企业微信官网](https://work.weixin.qq.com/ "企业微信官网")![企业微信登录页](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/weixinpic/weixinlogin.png)
 
 # 在开发平台配置文档说明
 
