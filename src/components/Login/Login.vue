@@ -1,7 +1,7 @@
 <template>
   <div class="login-box">
     <div class="login-logo">
-      <img class="logo-bg" src="./login-banner.jpg">
+      <img class="logo-bg" src="./login-banner.png">
       <img class="logo" src="./logo.png">
     </div>
     <div class="inputs-warp">
@@ -128,7 +128,7 @@ export default {
         position: relative;
         width: 100%;
         height: 0;
-        padding-top: 50%;
+        padding-top: 70%;
         overflow: hidden;
       .logo-bg {
         position: absolute;
@@ -143,6 +143,8 @@ export default {
         top:50%;
         left: 50%;
         transform: translate(-50%, -50%);
+        width: 100px;
+        height: 100px;
       }
     }
     .inputs-warp{
