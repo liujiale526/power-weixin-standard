@@ -2,7 +2,11 @@
   <div class="login-box">
     <div class="login-logo">
       <img class="logo-bg" src="./login-banner.png">
-      <img class="logo" src="./logo.png">
+      <div class="logo-content">
+        <img class="logo" src="./logo.png">
+        <h3 class="logo-text">PowerOn</h3>
+        <h3 class="logo-text">普华项目管理系统</h3>
+      </div>
     </div>
     <div class="inputs-warp">
       <div class="row-input">
@@ -137,14 +141,26 @@ export default {
         width: 100%;
         height: 100%;
       }
-      .logo {
-        width: 60%;
+      .logo-content {
+        height: 80%;
+        width: 80%;
         position: absolute;
-        top:50%;
+        top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 100px;
-        height: 100px;
+        .logo {
+          display: block;
+          width: 100px;
+          height: 100px;
+          margin: 0 auto;
+        }
+        .logo-text {
+          color: #fff;
+          font-family: 'SimSun','Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+          font-size: 18px;
+          text-align: center;
+          padding: 10px;
+        }
       }
     }
     .inputs-warp{
