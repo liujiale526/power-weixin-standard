@@ -233,7 +233,7 @@
 		"children": [{//(必填) 表单中的子表 记住这里是个数组，如果没有子表 默认给一个空的数组就可以了
 			"KeyWord": "PS_IncomeContract_PayNodes",//(必填) 子表的关键字
 			"tableListType": "default",//(可填) 子表列表显示的样式 和上面窗体中的tableListType值一样 具体的参考窗体的tableListType属性
-			"idfield": "Id",(必填，目前程序中暂时没有使用到此属性，但是后面会用到) 子表的主键
+			"idfield": "Id",(必填) 子表的主键
 			"type": "grid",//(可填，暂时没用到此属性，后面会用到) 子表的类表的类型
 			"name": "付款节点",// (必填) 表的名称 字数最好控制在4-6个字
 			"title": {// 具体可以参考窗体的此属性
