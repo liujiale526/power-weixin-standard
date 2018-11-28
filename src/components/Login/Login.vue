@@ -156,7 +156,7 @@ export default {
         }
         .logo-text {
           color: #fff;
-          font-family: 'SimSun','Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+          font-family: "PingFangSC-Regular", sans-serif;
           font-size: 18px;
           text-align: center;
           padding: 10px;
