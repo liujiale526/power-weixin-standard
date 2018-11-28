@@ -36,7 +36,7 @@
                   </div>
                 </li>
                 <li v-if="formList.length > 0"
-                    @click.prevent="openForm(item.Id)"
+                    @click.prevent="openForm(item)"
                     v-for="(item, index) in formList" :key="index"
                     class="form-list-unit">
                   <form-list ref="formListUnit"
@@ -326,11 +326,12 @@ export default {
         this.$refs.formList.forceUpdate()
       }, 1500)
     },
-    openForm (Id) {
+    openForm (item) {
       if (this.showCheckBox) {
         return false
       } else {
-        this.$router.push(`/weixinform/${this.openformid}/edit/${Id}`)
+        let KeyValue = item[this.windowConfig.idfield]
+        this.$router.push(`/weixinform/${this.openformid}/edit/${KeyValue}`)
       }
     },
     // 计算form列表容器的高度
