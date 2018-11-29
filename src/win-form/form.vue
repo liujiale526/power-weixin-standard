@@ -137,6 +137,7 @@
   </transition>
 </template>
 <script type="text/ecmascript-6">
+import { Base64 } from 'js-base64'
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 // 引入子表和通用相关组件
 import {
@@ -158,7 +159,7 @@ import {
   getTabShowRight
 } from 'common/js/Util.js'
 
-import { Base64 } from 'js-base64'
+import { saveFromDataParams } from 'common/js/form.js'
 
 const DIRICTION_H = 'horizontal'
 const debug = process.env.NODE_ENV !== 'production'
@@ -227,23 +228,13 @@ export default {
     },
     // 保存主表
     saveFromData (callback, msg) {
-      let KeyWord = this.KeyWord
       let { formstate } = this.routerParams
-      let objItem = formatFromDataToSave(
-        this.formAllConfig.comboboxdata,
-        this.mainformData,
-        KeyWord
-      )
-      let obj = {
-        KeyWord: KeyWord,
-        formAllConfig: this.formAllConfig,
-        KeyWordType: 'BO',
-        data: [objItem],
-        formDate: formstate,
-        FormId: this.routerParams.FromId
-      }
-
-      let params = organizeParams(obj)
+      let params = saveFromDataParams({
+        KeyWord: this.KeyWord,
+        mainformData: this.mainformData,
+        routerParams: this.routerParams,
+        formAllConfig: this.formAllConfig
+      })
 
       this.FormSaveData(params).then((response) => {
         if (!msg) {
@@ -261,7 +252,7 @@ export default {
     },
     // 从获取的配置信息赋予当前表单
     setFormDataFromConfig (formConfigUI) {
-      let formTitle = formConfigUI.formTitle
+      let { formTitle } = formConfigUI
 
       document.title = formTitle || '表单详情'
       this.switches = organizeSwitchsData(formConfigUI)
@@ -269,19 +260,17 @@ export default {
     },
     // 获取表单的配置信息
     _FormInit (callback) {
-      let KeyValue = this.routerParams.Id
-      let formstate = this.routerParams.formstate
-      if (formstate === 'add') {
-        KeyValue = ''
-      }
+      let { FromId, formstate, Id } = this.routerParams
+      let KeyValue = Id
 
-      if (!this.routerParams.FromId) {
+      if (formstate === 'add') { KeyValue = '' }
+      if (!FromId) {
         this.$nextTick(() => {
-          this.AlertShowEvent('openformid is ' + this.routerParams.FromId)
+          this.AlertShowEvent('openformid is ' + FromId)
         })
       } else {
         let params = {
-          FormId: this.routerParams.FromId,
+          FormId: FromId,
           KeyValue: KeyValue || '',
           FormState: formstate
         }
@@ -299,7 +288,6 @@ export default {
             this.setFormDataFromConfig(appconfig)
             callback && callback()
           } else {
-            let { FromId, formstate, Id } = this.routerParams
             if (debug) {
               this.$nextTick(() => {
                 this.AlertShowEvent('获取不到App的配置信息')
