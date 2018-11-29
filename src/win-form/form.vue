@@ -326,12 +326,10 @@ export default {
     },
     // 加载主表数据
     _FormMainLoad () {
-      let KeyValue = this.routerParams.Id
-      let formstate = this.routerParams.formstate
-      if (formstate === 'add') {
-        KeyValue = ''
-      }
+      let { formstate, Id } = this.routerParams
+      let KeyValue = Id
 
+      if (formstate === 'add') { KeyValue = '' }
       let params = {
         KeyWord: this.KeyWord,
         KeyValue: KeyValue,
