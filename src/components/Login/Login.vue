@@ -119,6 +119,7 @@ export default {
 </script>
 <style lang="less" scoped  rel="stylesheet/less">
   @import "~common/styles/mixin.less";
+  @import "~common/styles/transition.less";
 
   .login-box{
     position: absolute;
@@ -153,6 +154,7 @@ export default {
           width: 100px;
           height: 100px;
           margin: 0 auto;
+          animation: Rotate 10s infinite linear;
         }
         .logo-text {
           color: #fff;
