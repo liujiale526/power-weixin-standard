@@ -22,6 +22,18 @@ const switchsTail = {
   }
 }
 
+// 洗牌算法
+function shuffle (arr) {
+  let _arr = arr.slice()
+  for (let i = 0; i < _arr.length; i++) {
+    let j = Math.floor(Math.random() * (i - 0 + 1) + 0)
+    let t = _arr[i]
+    _arr[i] = _arr[j]
+    _arr[j] = t
+  }
+  return _arr
+}
+
 // 组装switchs 的数据
 export function organizeSwitchsData (config) {
   let arr = []
@@ -346,9 +358,10 @@ export function redirectRoutes (Map) {
 
 // 设置菜单的字体和背景
 export function setFontColor (data) {
+  let fontMap = shuffle(systemConfig.fontMap)
   data.forEach((item, index) => {
-    let reIndex = index % systemConfig.fontMap.length
-    item = Object.assign(item, systemConfig.fontMap[reIndex])
+    let reIndex = index % fontMap.length
+    item = Object.assign(item, fontMap[reIndex])
   })
 
   return data
