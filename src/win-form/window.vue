@@ -214,7 +214,7 @@ export default {
         KeyWordType: 'BO',
         index: this.pageIndex,
         size: this.pageSize,
-        swhere: 'EpsProjId=\'' + EpsProjId + '\'',
+        swhere: '1=1 and EpsProjId=\'' + EpsProjId + '\'',
         select: '',
         sort: config.joindata.sort || '',
         extparams: ''
