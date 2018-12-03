@@ -453,18 +453,6 @@ export function routerBeforeEach (router) {
     if (to.query.url === from.path) {
       next('/workinfos')
     }
-
-    switch (from.path) {
-      case '/workinfos':
-        next('/peopleCenter')
-        break
-      case '/messageinfos':
-        next('/peopleCenter')
-        break
-      case '/notifyInfos':
-        next('/peopleCenter')
-        break
-    }
   })
 }
 
