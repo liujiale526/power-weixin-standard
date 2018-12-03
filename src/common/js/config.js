@@ -1,9 +1,8 @@
 // 系统配置
 export const systemConfig = {
-  devDomainName: 'http://dev.p3china.com:9508',
-  // 吴石磊 http://192.168.11.113:8053
-  // 重机测试服务器 http://zj.goodr.cn:8482  admin CHMC123chmc | xujiantang passw0rd123
-  // 北京服务器 http://bj.goodr.cn:8003
+  // 山东分公司 http://123.59.89.133:9102 shanshimeng  ， 123123
+  // 上海总部 http://dev.p3china.com:9508 test
+  devDomainName: 'http://123.59.89.133:9102',
   imgBaseUrl: '/PowerPlat/Control/File.ashx?action=browser&_type=ftp&_fileid=',
   fontMap: [
     {
