@@ -1,8 +1,9 @@
 // 系统配置
 export const systemConfig = {
-  // 山东分公司 http://123.59.89.133:9102 shanshimeng  ， 123123
+  // 山东分公司测试 http://123.59.89.133:9102 shanshimeng  ， 123123
+  // 山东分公司 水电13局 http://wxapi.stecol.cn  H002 Stecol@2212
   // 上海总部 http://dev.p3china.com:9508 test
-  devDomainName: 'http://123.59.89.133:9102',
+  devDomainName: 'http://dev.p3china.com:9508',
   imgBaseUrl: '/PowerPlat/Control/File.ashx?action=browser&_type=ftp&_fileid=',
   fontMap: [
     {
