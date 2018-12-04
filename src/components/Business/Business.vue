@@ -93,8 +93,9 @@ export default {
         if (response.data.value) {
           arr = response.data.value
         }
-
-        let menu = arr.concat()
+        let menu = arr.filter((item) => {
+          return item.Id === 'dddddddd-0000-0000-0000-000000000000'
+        })
         this.menuListdefault = arr.concat()
 
         if (menu.length > 0) {
