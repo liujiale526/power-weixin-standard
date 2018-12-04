@@ -266,11 +266,7 @@ export default {
       this._GridPageLoad(this.config, (data) => {
         let list = searchLists(this.searchField, this.searchQuery, data)
 
-        if (this.searchQuery !== '') {
-          this.formList = [...list]
-        } else {
-          this.formList = [...this.formList, ...list]
-        }
+        this.formList = [...list]
       }, this.searchQuery)
     },
     // 选中一条数据的事件
