@@ -30,7 +30,6 @@ export default {
       this.$emit('Add')
     },
     Delete () {
-      this.actionShow = true
       this.$emit('Delete')
     },
     preDelete () {
@@ -40,6 +39,13 @@ export default {
     backPre () {
       this.actionShow = true
       this.$emit('backPre')
+    },
+    deleteSuccess (code) {
+      if (code === 200) {
+        this.actionShow = true
+      } else {
+        this.actionShow = false
+      }
     }
   }
 }

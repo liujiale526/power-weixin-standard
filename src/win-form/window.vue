@@ -37,7 +37,7 @@
                 </li>
                 <li v-if="formList.length > 0"
                     @click.prevent="openForm(item)"
-                    v-for="item in formList" :key="item.Id"
+                    v-for="item in formList" :key="item[idfield]"
                     class="form-list-unit">
                   <form-list ref="formListUnit"
                     :item="item"
@@ -57,6 +57,7 @@
       </div>
       <nav ref="nav" class="nav-bar-wrap">
         <footer-bar
+          ref="footerBar"
           @Add="_add"
           @preDelete="_preDelete"
           @Delete="_delete"
@@ -81,6 +82,7 @@ export default {
   data () {
     return {
       KeyWord: '',
+      idfield: 'Id',
       ExtJson: {},
       windowConfig: {},
       comboboxdata: {},
@@ -152,6 +154,7 @@ export default {
       this.placeholder = windowConfig.search.title
       this.searchField = windowConfig.search.field
       this.pageSize = windowConfig.size
+      this.idfield = windowConfig.idfield || 'Id'
 
       this.option = Object.assign(this.option, option)
       this.tableType = getTableType(windowConfig.tableListType)
@@ -252,8 +255,10 @@ export default {
 
       this.FormSaveData(params).then((response) => {
         callback && callback()
+        this._deleteSuccess(200)
       }).catch((e) => {
         this.AlertShowEvent(e.message)
+        this._deleteSuccess(400)
       })
     },
     // search start
@@ -289,6 +294,9 @@ export default {
       })
       this.showCheckBox = false
       this.selectItems = []
+    },
+    _deleteSuccess (code) {
+      this.$refs.footerBar.deleteSuccess(code)
     },
     // 确定删除
     _delete () {
