@@ -23,7 +23,6 @@ Vue.config.productionTip = false
 
 // 导航守卫
 routerBeforeEach(router)
-
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
