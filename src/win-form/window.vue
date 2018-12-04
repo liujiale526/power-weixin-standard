@@ -37,7 +37,7 @@
                 </li>
                 <li v-if="formList.length > 0"
                     @click.prevent="openForm(item)"
-                    v-for="(item, index) in formList" :key="index"
+                    v-for="item in formList" :key="item.Id"
                     class="form-list-unit">
                   <form-list ref="formListUnit"
                     :item="item"
