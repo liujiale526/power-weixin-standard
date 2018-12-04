@@ -570,9 +570,13 @@ export default {
         }
 
         // 如果可抄送人员，默认不选中 个人感觉默认不选中才合理 PC端是默认全部选中
-        item.CanSelectCopyUsers.forEach((copyUsersItem, copyUsersIndex) => {
-          copyUsersItem.checked = false
-        })
+        if (item.CanSelectCopyUsers.length > 1) {
+          item.CanSelectCopyUsers[0].checked = true
+        } else {
+          item.CanSelectCopyUsers.forEach((copyUsersItem, copyUsersIndex) => {
+            copyUsersItem.checked = false
+          })
+        }
 
         if (!item.IsCancel) {
           arr.push(item)

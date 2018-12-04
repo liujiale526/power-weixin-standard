@@ -476,7 +476,6 @@ export default {
     // 组织数据，添加权限
     formatNextNodeList (array) {
       let arr = []
-      console.log(array)
       array.forEach((item, index) => {
         this.IsMindMustInput = item.IsMindMustInput
         // if SelectNodeMode === 'SelectedNode | 'SelectedAndDisabled'
@@ -514,10 +513,11 @@ export default {
               userItem.checked = false
             }
           })
+        }
 
-          if (item.CanSelectUsers.length === 1) {
-            item.CanSelectUsers[0].checked = true
-          }
+        // 如果可送审人员默认只有一个，则默认选中
+        if (item.CanSelectUsers.length === 1) {
+          item.CanSelectUsers[0].checked = true
         }
 
         // 如果可抄送人员，默认不选中 个人感觉默认不选中才合理 PC端是默认全部选中
