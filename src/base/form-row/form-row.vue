@@ -78,7 +78,7 @@
     <div v-if="type === 'checkBox'" class="input-row input">
       <label for="input框 checkBox类型" class="label-text">{{ label }}</label>
       <div @click="changeCheckBox" class="input">
-        <check-icon class="input-text" :checked="rowValue === '1'"></check-icon>
+        <check-icon class="input-text" :checked="rowValue"></check-icon>
       </div>
     </div>
 
@@ -200,6 +200,12 @@ export default {
       default () {
         return {}
       }
+    },
+    fieldItem: {
+      type: Object,
+      default () {
+        return {}
+      }
     }
   },
   data () {
@@ -272,6 +278,9 @@ export default {
 
             this.rowValue = `${toThousand(main, true)}.${formatNumber(tail, 8)}`
             break
+          case 'checkBox':
+            this.rowValue = this.formatCheckBoxDataToView(value)
+            break
           default:
             this.rowValue = value
         }
@@ -280,18 +289,72 @@ export default {
     change (value) {
       this.rowValue = value
     },
-    //
+    // checkbox数据为了数据展示转换
+    formatCheckBoxDataToView (value) {
+      let { fieldType } = this.fieldItem
+
+      if (!fieldType) {
+        throw new Error('checkBox need set fieldType')
+      }
+
+      switch (fieldType) {
+        case 'Boolean':
+          return value
+        case 'Number':
+          if (value === 1) {
+            return true
+          } else {
+            return false
+          }
+        case 'String':
+          if (value === '1') {
+            return true
+          } else {
+            return false
+          }
+        default:
+          return false
+      }
+    },
+    // checkbox数据为了数据保存转换
+    formatCheckBoxDataToSave (rowValue) {
+      let { fieldType } = this.fieldItem
+
+      if (!fieldType) {
+        throw new Error('checkBox need set fieldType')
+      }
+
+      switch (fieldType) {
+        case 'Boolean':
+          return rowValue
+        case 'Number':
+          if (rowValue) {
+            return 1
+          } else {
+            return 0
+          }
+        case 'String':
+          if (rowValue) {
+            return '1'
+          } else {
+            return '0'
+          }
+        default:
+          return ''
+      }
+    },
+    // checkBox的change事件
     changeCheckBox () {
-      if (this.readonly === true || this.disabled === true) {
+      if (this.readonly === true || this.disabled === true || this.formStatus === 'view') {
         return false
       }
 
-      let checked = this.rowValue === '1'
+      let checked = this.rowValue
 
       if (checked) {
-        this.rowValue = '0'
+        this.rowValue = false
       } else {
-        this.rowValue = '1'
+        this.rowValue = true
       }
     },
     // 打开日期面板
@@ -323,19 +386,26 @@ export default {
           value: newRowValue
         }
 
-        if (this.type === 'money') {
-          item.value = newRowValue.replace(',', '')
-        }
-
-        if (this.type === 'percent') {
-          item.value = parseFloat(newRowValue) / 100
-        }
-
         if (this.KeyWord === '') {
           throw Error('your KeyWord is null, set it please')
         }
         if (this.field === '') {
           throw Error('your field is null, set it please')
+        }
+
+        switch (this.type) {
+          case 'money':
+            item.value = newRowValue.replace(',', '')
+            break
+          case 'percent':
+            item.value = parseFloat(newRowValue) / 100
+            break
+          case 'checkBox':
+            item.value = this.formatCheckBoxDataToSave(newRowValue)
+            console.log(this.fieldItem, item)
+            break
+          default:
+            item.value = item.value
         }
 
         this.$emit('enterChange', item)

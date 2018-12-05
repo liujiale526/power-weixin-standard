@@ -60,6 +60,7 @@
           :placeholder="fieldItem.placeholder"
           :field="fieldItem.field"
           :KeyWord="KeyWord"
+          :fieldItem="fieldItem"
           :mainformData="currentItem"
           :comboboxdata="comboboxdata"
           @enterChange="formRowChange"

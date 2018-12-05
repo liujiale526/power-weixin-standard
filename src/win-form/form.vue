@@ -36,6 +36,7 @@
                 :placeholder="fieldItem.placeholder"
                 :field="fieldItem.field"
                 :KeyWord="KeyWord"
+                :fieldItem="fieldItem"
                 :mainformData="mainformData"
                 :comboboxdata="formAllConfig.comboboxdata || {}"
                 @enterChange="formRowChange"
