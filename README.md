@@ -297,12 +297,12 @@
 3.  checkBox类型的配置
 
 	    {
-	            "field": "your field",// （必填）
-	            "title": "是否付款",// （必填）
-	            "format": "checkBox",// （必填）
-	            "readonly": false,// （可填）
-	            "placeholder": "",// （可填）
-				      "fieldType": 'Boolean' // (必填)'Boolean'|'Number'|'String'
+	      "field": "your field",// （必填）
+	      "title": "是否付款",// （必填）
+	      "format": "checkBox",// （必填）
+	      "readonly": false,// （可填）
+	      "placeholder": "",// （可填）
+				"fieldType": 'Boolean' // (必填)'Boolean'|'Number'|'String'
 	    }
 
 
