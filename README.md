@@ -305,6 +305,7 @@
 				"fieldType": 'Boolean' // (必填)'Boolean'|'Number'|'String'
 	    }
 
+
 	从上面的配置中可以看出，多了一个fieldType字段，fieldType字段值可以选择 Boolean类型，Number类型，String类型。
 
 	如果是Boolean类型，后端返回的数据类型就应该是Boolean类型的数据布尔值 true or false
