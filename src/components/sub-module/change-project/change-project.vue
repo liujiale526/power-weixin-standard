@@ -19,7 +19,7 @@
               <li @click="_switchEpsProject(item)" v-for="item in projects" :key="item.project_guid" class="project-list">
                 <div class="list-wrap">
                   <div class="icon-box">
-                    <img src="./default.png" alt="">
+                    <img v-lazy="computedLink(item)" alt="">
                   </div>
                   <div class="text-box">
                     <p class="v-text-inner title">
@@ -65,7 +65,9 @@ import {
 } from 'components'
 
 import { formatDate, searchLists } from 'common/js/Util.js'
+import { systemConfig } from 'common/js/config.js'
 
+const debug = process.env.NODE_ENV !== 'production'
 const isProject = '1'
 const isESP = '0'
 const DATATYPE = 'yyyy-MM-dd HH:mm:ss'
@@ -92,6 +94,14 @@ export default {
     this._getEpsProjects()
   },
   methods: {
+    // 计算图片地址
+    computedLink (item) {
+      if (debug) {
+        return '/static/img/projectDefault.png'
+      } else {
+        return `${systemConfig.imgBaseUrl}${item.EpsProjIcon}`
+      }
+    },
     // 获取项目数据 进行项目和EPS分类
     _getEpsProjects (query) {
       this.getEpsProjectsData().then((response) => {
