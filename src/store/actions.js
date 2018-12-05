@@ -30,8 +30,46 @@ import {
   FormSave,
   FormLoad,
   FormData,
-  APIMessages
+  APIMessages,
+  getEpsProjects,
+  SwitchEpsProject
 } from 'api'
+
+// 切换项目相关
+// 获取项目和EPS
+export const getEpsProjectsData = function ({commit}) {
+  return new Promise((resolve, reject) => {
+    commit(types.SHOWLOADING, true)
+    getEpsProjects().then((res) => {
+      commit(types.SHOWLOADING, false)
+      if (res.success) {
+        resolve(res)
+      } else {
+        reject(getError(res.message))
+      }
+    }).catch((e) => {
+      commit(types.SHOWLOADING, false)
+      reject(e)
+    })
+  })
+}
+// 切换项目
+export const SwitchEpsProjectData = function ({commit}, ProjectGuid) {
+  return new Promise((resolve, reject) => {
+    commit(types.SHOWLOADING, true)
+    SwitchEpsProject(ProjectGuid).then((res) => {
+      commit(types.SHOWLOADING, false)
+      if (res.success) {
+        resolve(res)
+      } else {
+        reject(getError(res.message))
+      }
+    }).catch((e) => {
+      commit(types.SHOWLOADING, false)
+      reject(e)
+    })
+  })
+}
 
 // 窗体和表单相关
 // 在走审批流之前 更新数据信息

@@ -53,14 +53,11 @@
           </div>
         </div>
       </div>
-      <loading v-model="mx_isLoading"></loading>
-      <toast v-model="mx_toastShow" type="text" :time="mx_deleyTime">切换成功</toast>
-      <alert v-model="mx_alertShow" @on-hide="MixinAlertHideEvent" :title="mx_alertTitle" :content="mx_message"></alert>
     </div>
   </transition>
 </template>
 <script type="text/ecmascript-6">
-import { mapMutations } from 'vuex'
+import { mapMutations, mapActions } from 'vuex'
 import {
   SearchBox,
   LineBreak,
@@ -68,16 +65,14 @@ import {
 } from 'components'
 
 import { formatDate, searchLists } from 'common/js/Util.js'
-import { commonComponentMixin } from 'common/js/mixin.js'
-import { SwitchEpsProject, getEpsProjects } from 'api/index.js'
 
 const isProject = '1'
 const isESP = '0'
 const DATATYPE = 'yyyy-MM-dd HH:mm:ss'
+const SWICTHSUCCESS = '切换成功'
 
 export default {
   name: 'changeproject',
-  mixins: [commonComponentMixin],
   data () {
     return {
       ListsHeight: 100,
@@ -86,13 +81,7 @@ export default {
       EPS: [],
       focused: false,
       searchQuery: '',
-      searchField: 'project_name',
-      mx_isLoading: false,
-      mx_message: '',
-      mx_alertShow: false,
-      mx_alertTitle: '提示',
-      mx_toastShow: false,
-      mx_deleyTime: 1000
+      searchField: 'project_name'
     }
   },
   mounted () {
@@ -105,7 +94,7 @@ export default {
   methods: {
     // 获取项目数据 进行项目和EPS分类
     _getEpsProjects (query) {
-      this.MinXinHttpFetch(getEpsProjects(), (response) => {
+      this.getEpsProjectsData().then((response) => {
         let data = response.data.value
         let projects = []
         let EPS = []
@@ -136,25 +125,28 @@ export default {
             this.EPS = searchLists(this.searchField, query, EPS)
           }
         }
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
       })
     },
     // 选择项目
     _switchEpsProject (item) {
       let ProjectGuid = item.project_guid
-      this.MinXinHttpFetch(SwitchEpsProject(ProjectGuid), (response) => {
-        if (response.success) {
-          this.mx_toastShow = true
-          this.setProjectInfo(item)
-          this._UserSession(() => {
-            if (this.timer) {
-              clearTimeout(this.timer)
-            }
-
-            this.timer = setTimeout(() => {
-              this.back()
-            }, 1000)
-          })
-        }
+      this.SwitchEpsProjectData(ProjectGuid).then((response) => {
+        this.ToastShowEvent(SWICTHSUCCESS)
+        this.setProjectInfo(item)
+        this.GetUserSession().then(() => {
+          if (this.timer) {
+            clearTimeout(this.timer)
+          }
+          this.timer = setTimeout(() => {
+            this.back()
+          }, 1000)
+        }).catch((e) => {
+          this.AlertShowEvent(e.message)
+        })
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
       })
     },
     // search start
@@ -191,7 +183,17 @@ export default {
     },
     ...mapMutations({
       setProjectInfo: 'SET_PROJECTINFO'
-    })
+    }),
+    ...mapActions([
+      'GetUserSession',
+      'getEpsProjectsData',
+      'SwitchEpsProjectData',
+      'AlertShowEvent',
+      'ToastShowEvent'
+    ])
+  },
+  destroyed () {
+    this.timer && clearTimeout(this.timer)
   },
   components: {
     SearchBox,
