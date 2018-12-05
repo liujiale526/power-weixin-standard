@@ -99,7 +99,11 @@ export default {
       if (debug) {
         return '/static/img/projectDefault.png'
       } else {
-        return `${systemConfig.imgBaseUrl}${item.EpsProjIcon}`
+        if (item.EpsProjIcon) {
+          return `${systemConfig.imgBaseUrl}${item.EpsProjIcon}`
+        } else {
+          return '/weixin3.0/static/img/projectDefault.png'
+        }
       }
     },
     // 获取项目数据 进行项目和EPS分类
