@@ -290,10 +290,30 @@
 	- "n2": 加千分位，保留两位小数点
 	- "rate": 汇率类型，一般指币种之间的汇率，小数点之后是8位
 	- "percent": 百分比类型 这里显示不带%,最好在对应的title属性里面添加%,提示一下客户
-	- "checkBox"： checkBox类型值一些选择框，一般对应的字段值为"1" or "0", "1" checkBox勾选， "0"则不选
 	- "yyyy-MM-dd": 日期类型
 	- "combobox": 下拉框类型
 	- "textarea": 多行文本类型
+	- "checkBox"： checkBox类型值一些选择框,对应的值可以设置成Boolean类型，Number类型，String类型 关于checkBox类型的数据有些特殊 见下面第三条注意规则
+3.  checkBox类型的配置
+
+	    {
+	            "field": "your field",// （必填）
+	            "title": "是否付款",// （必填）
+	            "format": "checkBox",// （必填）
+	            "readonly": false,// （可填）
+	            "placeholder": "",// （可填）
+				"fieldType": 'Boolean' // (必填)'Boolean'|'Number'|'String'
+	    }
+
+	从上面的配置中可以看出，多了一个fieldType字段，fieldType字段值可以选择 Boolean类型，Number类型，String类型。
+
+	如果是Boolean类型，后端返回的数据类型就应该是Boolean类型的数据布尔值 true or false
+	
+	如果是Number类型，后端返回的数据类型就应该是Number类型的数据 短整型 1 or 0
+
+	如果是String类型，后端返回的数据类型就应该是String类型的数据 字符串 '1' or'0'
+
+	上面三个类型，总有一种适合checkBox类型的情况
 
 #### 表单配置之后的样式图 ####
 ![](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/img/form1.png)
