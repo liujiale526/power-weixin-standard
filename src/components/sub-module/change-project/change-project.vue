@@ -12,7 +12,7 @@
       <div ref="switchesWrap" class="switches-wrap">
         <switches-box @switch="switchItem" :currentIndex="currentIndex"></switches-box>
       </div>
-      <div ref="projectListsWrap" class="project-lists-wrap" :style="{'height':ListsHeight + 'px'}">
+      <div ref="projectListsWrap" class="project-lists-wrap">
         <div class="project-lists-change-wrap">
           <div class="project-full-msg project" v-show="isShow(0)">
             <ul class="project-lists">
@@ -77,7 +77,6 @@ export default {
   name: 'changeproject',
   data () {
     return {
-      ListsHeight: 100,
       currentIndex: 0,
       projects: [],
       EPS: [],
@@ -87,10 +86,6 @@ export default {
     }
   },
   mounted () {
-    this.getListsHeight()
-
-    this.resize()
-
     this._getEpsProjects()
   },
   methods: {
@@ -175,17 +170,6 @@ export default {
     back () {
       this.$router.back()
     },
-    getListsHeight () {
-      this.ListsHeight =
-      this.$refs.changeProject.offsetHeight -
-      this.$refs.headerChange.offsetHeight -
-      this.$refs.switchesWrap.offsetHeight
-    },
-    resize () {
-      window.addEventListener('resize', () => {
-        this.getListsHeight()
-      })
-    },
     switchItem (index) {
       this.currentIndex = index
     },
@@ -264,6 +248,7 @@ export default {
     }
     .project-lists-wrap {
       width: 100%;
+      height: calc(100% - 73px);
       overflow-y: auto;
       .project-lists-change-wrap {
         width: 100%;
