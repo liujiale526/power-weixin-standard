@@ -302,14 +302,14 @@
 	            "format": "checkBox",// （必填）
 	            "readonly": false,// （可填）
 	            "placeholder": "",// （可填）
-				"fieldType": 'Boolean' // (必填)'Boolean'|'Number'|'String'
+				      "fieldType": 'Boolean' // (必填)'Boolean'|'Number'|'String'
 	    }
 
 
 	从上面的配置中可以看出，多了一个fieldType字段，fieldType字段值可以选择 Boolean类型，Number类型，String类型。
 
 	如果是Boolean类型，后端返回的数据类型就应该是Boolean类型的数据布尔值 true or false
-	
+
 	如果是Number类型，后端返回的数据类型就应该是Number类型的数据 短整型 1 or 0
 
 	如果是String类型，后端返回的数据类型就应该是String类型的数据 字符串 '1' or'0'
