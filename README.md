@@ -302,7 +302,7 @@
 	      "format": "checkBox",// （必填）
 	      "readonly": false,// （可填）
 	      "placeholder": "",// （可填）
-				"fieldType": 'Boolean' // (必填)'Boolean'|'Number'|'String'
+        "fieldType": 'Boolean' // (必填)'Boolean'|'Number'|'String'
 	    }
 
 
