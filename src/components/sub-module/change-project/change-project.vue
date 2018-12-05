@@ -53,9 +53,6 @@
           </div>
         </div>
       </div>
-      <div class="back-btn-wrap">
-        <back-btn></back-btn>
-      </div>
       <loading v-model="mx_isLoading"></loading>
       <toast v-model="mx_toastShow" type="text" :time="mx_deleyTime">切换成功</toast>
       <alert v-model="mx_alertShow" @on-hide="MixinAlertHideEvent" :title="mx_alertTitle" :content="mx_message"></alert>
@@ -65,7 +62,6 @@
 <script type="text/ecmascript-6">
 import { mapMutations } from 'vuex'
 import {
-  backBtn,
   SearchBox,
   LineBreak,
   SwitchesBox
@@ -200,8 +196,7 @@ export default {
   components: {
     SearchBox,
     SwitchesBox,
-    LineBreak,
-    backBtn
+    LineBreak
   }
 }
 </script>
@@ -312,12 +307,6 @@ export default {
           }
         }
       }
-    }
-    .back-btn-wrap {
-      position: absolute;
-      bottom: 50px;
-      right: 15px;
-      z-index: 500;
     }
   }
 </style>
