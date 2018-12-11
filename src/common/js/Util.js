@@ -395,7 +395,13 @@ export function formatDate (time, format) {
   if (!time) {
     return ''
   }
+
+  if (typeof time === 'string') {
+    time = time.replace('T', ' ').replace(new RegExp('-', 'gm'), '/')
+  }
+
   let t = new Date(time)
+
   if (t.getTime() === 0) {
     t = new Date()
   }
