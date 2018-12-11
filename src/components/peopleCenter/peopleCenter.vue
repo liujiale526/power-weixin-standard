@@ -40,7 +40,7 @@
           </div>
         </div>
         <div class="user-action">
-          <div class="action-item">
+          <div v-if="!isAdmin" class="action-item">
             <div class="change-text">
               <i class="fa fa-unlock" aria-hidden="true"></i>
               修改密码
@@ -168,12 +168,7 @@ export default {
   },
   methods: {
     GoToPage (page) {
-      let { IsAdmin, IsITAdmin } = this.UserSession
-      if (IsAdmin || IsITAdmin) {
-        return false
-      } else {
-        this.$router.push(`/${page}`)
-      }
+      this.$router.push(`/${page}`)
     },
     clearStore () {
       clearStorage()
