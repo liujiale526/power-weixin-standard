@@ -1,10 +1,99 @@
 <template>
   <transition name="slide">
     <div class="work-node-select">
-      <div class="after-select-content">
+      <div v-show="isShow('selectFlow')" class="before-select-content">
+        <div class="workflow-select">
+          <header class="header">
+            <div class="title">
+              流程选择
+            </div>
+          </header>
+          <line-break></line-break>
+          <ul class="select-lists">
+            <li class="select-list"
+                v-if="WorkFlowList.length > 0"
+                v-for="(item, index) in WorkFlowList"
+                @click="selectItem(index)"
+                :key="index">
+                <person-select-list
+                  ref="personSelectList"
+                  :index="index"
+                  :selectType="selectType"
+                  :item="item"
+                  :isChecked="item.checked"
+                  @selectFlowItem="selectFlowItem"
+                ></person-select-list>
+            </li>
+          </ul>
+        </div>
+        <div class="person-select-bar">
+          <div @click="toNextStep('nodeSelect')" class="select-bar">
+            <span>下一步</span>
+          </div>
+          <div @click="cancel" class="select-bar">
+            <span>返回</span>
+          </div>
+        </div>
+      </div>
+      <div v-show="isShow('nodeSelect')" class="node-select-content">
+        <div class="node-select">
+          <header class="header">
+            <div class="title">
+              节点选择
+            </div>
+            <div class="toggle-bar">
+             <cube-switch class="toggle-switch" v-model="filterNormalNode"></cube-switch>
+            </div>
+          </header>
+          <line-break></line-break>
+          <ul class="node-select-lists">
+            <li class="node-select-list"
+                :class="{'selected': index === currentNodeList }"
+                v-for="(item, index) in NodeList"
+                :key="index"
+                v-show="normalNodeIsShow(item)"
+                @click.prevent.stop="selectNodeList(index)"
+              >
+              <div class="list-inner">
+                <div class="list-inner-header">
+                  <div class="node-name">
+                    <span class="name">节点名称:</span>
+                    <span class="text">{{ item.NodeName }}</span>
+                  </div>
+                  <div class="node-status">
+                    <span class="name">节点状态:</span>
+                    <span class="text">{{ tranformStatus(item.Status) }}</span>
+                  </div>
+                </div>
+                <div class="list-inner-body">
+                  <div class="node-info">
+                    <span class="name">节点描述:</span>
+                    <span class="text">{{ item.ShowUserInfo }}</span>
+                  </div>
+                  <div class="node-action">
+                    <span class="name">操作:</span>
+                    <span @click.prevent.stop="draftUser(index)" class="text action">{{ transformNodeListAction(item) }}</span>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="person-select-bar">
+          <div @click="toNextStep('peopleSelect')" class="select-bar">
+            <span>下一步</span>
+          </div>
+          <div v-if="formState!== 'view'" @click="toUpStep('selectFlow')" class="select-bar">
+            <span>上一步</span>
+          </div>
+        </div>
+      </div>
+      <div v-show="isShow('peopleSelect')" class="after-select-content">
         <div class="people-select">
           <header class="header">
-            <div class="title">人员选择</div>
+            <div class="title">
+              人员选择
+            </div>
             <div class="toggle-bar">
              <cube-switch class="toggle-switch" v-model="showPeopleContent"></cube-switch>
             </div>
@@ -26,7 +115,7 @@
                 <ul class="people-lists">
                   <li class="people-list"
                       v-for="(CanSelectUsersItem, CanSelectUsersIndex) in NextNodeListItem.CanSelectUsers"
-                      :key="CanSelectUsersItem.UserID"
+                      :key="CanSelectUsersIndex"
                       @click="selectUsersEvent(NextNodeListIndex, CanSelectUsersIndex)"
                     >
                     <div class="user-name">{{ CanSelectUsersItem.UserName }}</div>
@@ -40,8 +129,8 @@
                 <h1 class="title">可抄送人员</h1>
                 <ul class="people-lists">
                   <li class="people-list"
-                      v-for="(CanSelectCopyUsersItem, CanSelectCopyUsersIndex) in NextNodeListItem.CanSelectCopyUsers"
-                      :key="CanSelectCopyUsersItem.UserID"
+                       v-for="(CanSelectCopyUsersItem, CanSelectCopyUsersIndex) in NextNodeListItem.CanSelectCopyUsers"
+                      :key="CanSelectCopyUsersIndex"
                       @click="selectCopyUsersEvent(NextNodeListIndex, CanSelectCopyUsersIndex)"
                     >
                     <div class="user-name">{{ CanSelectCopyUsersItem.UserName }}</div>
@@ -66,11 +155,11 @@
           </section>
         </div>
         <div class="person-select-bar">
-          <div @click="cancel" class="select-bar">
-            <span>返回</span>
-          </div>
           <div @click="submitFlow" class="select-bar">
             <span>提交</span>
+          </div>
+          <div v-if="formState!== 'view'" @click="toUpStep('nodeSelect')" class="select-bar">
+            <span>上一步</span>
           </div>
         </div>
       </div>
@@ -78,28 +167,45 @@
       <position-user-list
         ref="positionUserList"
         :subParams="positionUserParams"
+        @complete="completeByDraft"
       ></position-user-list>
     </div>
   </transition>
 </template>
 <script type="text/ecmascript-6">
 import { mapActions } from 'vuex'
+import LineBreak from 'base/line/line.vue'
 import PositionUserList from 'base/position-user-list/position-user-list.vue'
 import PersonSelectList from 'base/person-select-list/person-select-list.vue'
 import { EFlowOperate, EFlowLineType } from 'common/js/config.js'
-import { XTextarea, Group } from 'vux'
+import { XTextarea, Group, InlineXSwitch } from 'vux'
 import CheckIcon from 'base/check-icon/check-icon.vue'
+import { createGuid } from 'common/js/Util.js'
 
 export default {
   name: 'workflow',
   data () {
     return {
+      selectType: 'single',
+      formState: '',
+      query: {},
+      WorkFlowList: [],
+      WorkFlow: {},
+      currentWorkFlow: null,
+      currentNodeList: null,
       showPeopleContent: true,
+      filterNormalNode: true,
+      currentStop: '',
       MindInfo: '',
       IsMindMustInput: true,
+      NodeList: [],
       NextNodeList: [],
       current: {},
       positionUserParams: {},
+      byDraft: {
+        users: [],
+        NodeCode: ''
+      },
       SelectPeople: {}
     }
   },
@@ -107,70 +213,64 @@ export default {
     this.workNodeLoad()
   },
   computed: {
-    // 计算指定容器的高度
     PeopleContentHeight () {
       return this.showPeopleContent ? 'calc(60% - 50px)' : '0px'
-    },
-    // 获取url链接里面的参数
-    query () {
-      return this.$router.history.current.query
-    },
-    // 获取表单的当前状态
-    formState () {
-      return this.query.FormState
     }
   },
   methods: {
     // 执行数据加载
     workNodeLoad () {
+      this.getQuery()
       if (this.query.flowOperate) {
-        this.getSelectPeople()
+        this.getWorkFlowData()
       }
     },
-    // 获取 可选人员
-    getSelectPeople () {
-      let obj = Object.assign({}, {
-        WorkInfoID: this.query.WorkInfoID,
-        FormId: this.query.FormId,
-        KeyWord: this.query.KeyWord,
-        KeyValue: this.query.KeyValue,
-        SequeID: this.query.SequeID
-      })
+    // 获取选择的节点和人员(送审和抄送)
+    getSelectedNode () {
+      let array = []
+      let msg = ''
 
-      if (this.query.WorkInfoID) {
-        obj = Object.assign(obj, {
-          WorkInfoID: this.query.WorkInfoID
-        })
-      }
+      this.NextNodeList.forEach((item, index) => {
+        let obj = {}
+        obj.NodeCode = item.NodeCode
+        obj.SendUserList = []
+        obj.CopyUserList = []
 
-      if (this.query.GroupID) {
-        obj = Object.assign(obj, {
-          GroupID: this.query.GroupID
-        })
-      }
+        if (item.checked) {
+          item.CanSelectUsers.forEach((userItem, userIndex) => {
+            if (userItem.checked && userItem.checked === true) {
+              let userObj = Object.assign({}, userItem)
+              delete userObj.checked
+              obj.SendUserList.push(userObj)
+            }
+          })
 
-      let params = {
-        Current: obj,
-        FlowOperate: EFlowOperate.SupplyInstance,
-        SubOperate: 'ReadSendNodeList'
-      }
+          item.CanSelectCopyUsers.forEach((copyUserItem, copyUserIndex) => {
+            if (copyUserItem.checked && copyUserItem.checked === true) {
+              let copyUserObj = Object.assign({}, copyUserItem)
+              delete copyUserObj.checked
+              obj.CopyUserList.push(copyUserObj)
+            }
+          })
 
-      this.FlowActionData(JSON.stringify(params)).then((response) => {
-        let value = response.data.value
-        let NextNodeList = []
-        console.log(value)
+          if (obj.SendUserList.length === 0 && item.IsMustNotUsers === false) {
+            msg = `${item.NodeName}节点没有选择送审人员`
+          }
 
-        if (value) {
-          this.SelectPeople = Object.assign({}, value)
-
-          NextNodeList = value.NextNodeList.concat()
+          if (item.checked) {
+            array.push(obj)
+          }
         }
-
-        this.current = Object.assign({}, value.Current)
-        this.NextNodeList = this.formatNextNodeList(NextNodeList)
-      }).catch((e) => {
-        this.AlertShowEvent(e.message)
       })
+
+      if (array.length === 0) {
+        msg = `节点数据为空,请选择一个节点`
+      }
+
+      return {
+        data: array,
+        error: msg
+      }
     },
     // 提交意见
     submitFlow () {
@@ -326,52 +426,52 @@ export default {
 
       this.NextNodeList = NextNodeList.concat()
     },
-    // 获取选择的节点和人员(送审和抄送) 组织数据
-    getSelectedNode () {
-      let array = []
-      let msg = ''
-
-      this.NextNodeList.forEach((item, index) => {
-        let obj = {}
-        obj.NodeCode = item.NodeCode
-        obj.SendUserList = []
-        obj.CopyUserList = []
-
-        if (item.checked) {
-          item.CanSelectUsers.forEach((userItem, userIndex) => {
-            if (userItem.checked && userItem.checked === true) {
-              let userObj = Object.assign({}, userItem)
-              delete userObj.checked
-              obj.SendUserList.push(userObj)
-            }
-          })
-
-          item.CanSelectCopyUsers.forEach((copyUserItem, copyUserIndex) => {
-            if (copyUserItem.checked && copyUserItem.checked === true) {
-              let copyUserObj = Object.assign({}, copyUserItem)
-              delete copyUserObj.checked
-              obj.CopyUserList.push(copyUserObj)
-            }
-          })
-
-          if (obj.SendUserList.length === 0 && item.IsMustNotUsers === false) {
-            msg = `${item.NodeName}节点没有选择送审人员`
-          }
-
-          if (item.checked) {
-            array.push(obj)
-          }
-        }
+    // 同意
+    getSelectPeople (flow) {
+      let obj = Object.assign({}, {
+        WorkInfoID: this.query.WorkInfoID,
+        FormId: this.query.FormId,
+        KeyWord: this.query.KeyWord,
+        KeyValue: this.query.KeyValue,
+        SequeID: this.query.SequeID
       })
 
-      if (array.length === 0) {
-        msg = `节点数据为空,请选择一个节点`
+      if (this.query.WorkInfoID) {
+        obj = Object.assign(obj, {
+          WorkInfoID: this.query.WorkInfoID
+        })
       }
 
-      return {
-        data: array,
-        error: msg
+      if (this.query.GroupID) {
+        obj = Object.assign(obj, {
+          GroupID: this.query.GroupID
+        })
       }
+
+      let params = {
+        Current: obj,
+        FlowOperate: EFlowOperate.SupplyInstance,
+        SubOperate: 'ReadSendNodeList'
+      }
+
+      this.FlowActionData(JSON.stringify(params)).then((response) => {
+        let value = response.data.value
+        let NextNodeList = []
+        let NodeList = []
+
+        if (value) {
+          this.SelectPeople = Object.assign({}, value)
+
+          NextNodeList = value.NextNodeList.concat()
+          NodeList = value.NodeList ? value.NodeList.concat() : []
+        }
+
+        this.current = Object.assign({}, value.Current)
+        this.NextNodeList = this.formatNextNodeList(NextNodeList)
+        this.NodeList = NodeList
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
+      })
     },
     // 组织数据，添加权限
     formatNextNodeList (array) {
@@ -436,6 +536,89 @@ export default {
 
       return arr
     },
+    // 下一步的操作
+    toNextStep (step) {
+      let flow = this.getCurrentFlowItem()
+
+      if (step === 'selectFlow') {
+        this.currentStop = step
+      } else {
+        this.currentStop = step
+      }
+
+      if (step === 'peopleSelect') {
+        this.getSelectPeople(flow)
+      }
+    },
+    // 上一步的操作
+    toUpStep (step) {
+      let selectPeople = this.SelectPeople
+      if (!selectPeople.IsByDraft) {
+        this.currentStop = 'peopleSelect'
+        this.AlertShowEvent('不需要返回上一步')
+      } else {
+        this.currentStop = step
+      }
+    },
+    // 获取选择的流程数据
+    getCurrentFlowItem () {
+      let obj = null
+      for (let i = 0; i < this.WorkFlowList.length; i++) {
+        if (this.WorkFlowList[i].checked) {
+          obj = Object.assign({}, this.WorkFlowList[i])
+          break
+        }
+      }
+      return obj
+    },
+    // 获取流程数据
+    getWorkFlowData () {
+      let params = {
+        KeyWord: this.query.KeyWord,
+        KeyValue: this.query.KeyValue,
+        FormId: this.query.FormId,
+        FlowOperate: EFlowOperate.SelectFlow,
+        SequeID: this.query.SequeID
+      }
+
+      this.FlowActionData(JSON.stringify(params)).then((response) => {
+        let value = response.data.value
+        let WorkFlowList = []
+
+        this.WorkFlow = value
+        if (value && value.WorkFlowList) {
+          WorkFlowList = value.WorkFlowList.concat()
+        } else {
+          WorkFlowList = []
+        }
+
+        WorkFlowList.map((item, index) => {
+          if (value.WorkFlowID === item.WorkFlowID) {
+            item.checked = true
+          } else {
+            item.checked = false
+          }
+        })
+
+        this.WorkFlowList = WorkFlowList
+
+        if (WorkFlowList.length === 1 && WorkFlowList[0].IsAutoSelect) {
+          this.$nextTick(() => {
+            this.$refs.personSelectList[0].setChecked()
+          })
+        }
+
+        if (this.timer) {
+          clearTimeout(this.timer)
+        }
+
+        this.timer = setTimeout(() => {
+          this.toNextStep('peopleSelect')
+        }, 300)
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
+      })
+    },
     // 选择一条流程 当前组件调用
     selectItem (index) {
       this.$refs.personSelectList.forEach((item, ItemIndex) => {
@@ -446,7 +629,124 @@ export default {
         }
       })
     },
+    // 选择一条流程 给子组件调用
+    selectFlowItem (selectItem, checked, selectIndex) {
+      if (checked) {
+        this.WorkFlowList[selectIndex].checked = true
+      } else {
+        this.WorkFlowList[selectIndex].checked = false
+      }
+    },
+    // 获取岗位人员
+    getPositionAndUserList (row) {
+      let flow = this.getCurrentFlowItem()
+      let current = Object.assign({}, {
+        WorkFlowID: flow.WorkFlowID,
+        Version: flow.Version,
+        FormId: this.query.FormId,
+        KeyWord: this.query.KeyWord,
+        KeyValue: this.query.KeyValue,
+        WorkInfoID: flow.WorkInfoID ? flow.WorkInfoID : createGuid()
+      })
+
+      this.positionUserParams = Object.assign({}, {
+        SubOperate: 'SaveUserToInstanNode',
+        FlowOperate: 'SupplyFlow',
+        Current: current,
+        ConfigUserList: [],
+        NodeCode: row.NodeCode
+      })
+
+      this.$refs.positionUserList.load()
+    },
+    // 节点选择的时候选择节点
+    selectNodeList (index) {
+      this.currentNodeList = index
+    },
+    // 选择当前列表
+    draftUser (index) {
+      this.currentNodeList = index
+
+      let row = this.NodeList[index]
+      let UserList = row.UserList
+      let SendUserMode = row.SendUserMode
+      if (SendUserMode === 'ByDraft') {
+        if (UserList) {
+          if (UserList.length === 0) {
+            this.getPositionAndUserList(row)
+          }
+        } else {
+          this.getPositionAndUserList(row)
+        }
+      }
+    },
+    // 完成起草
+    completeByDraft (obj) {
+      this.byDraft = Object.assign({}, obj)
+    },
+    // 是否显示正常节点
+    normalNodeIsShow (row) {
+      if (row.SendUserMode === 'Normal' && this.filterNormalNode) {
+        return false
+      } else {
+        return true
+      }
+    },
+    // 转变NodeList的action操作
+    transformNodeListAction (row) {
+      let userList = row.UserList
+      let sendUserMode = row.SendUserMode
+
+      if (userList) {
+        let UserList = JSON.parse(userList)
+        if (sendUserMode === 'ByDraft') {
+          if (UserList.length === 0) {
+            return '选择人员'
+          } else if (UserList.length > 0) {
+            return '二次筛选'
+          }
+        } else if (sendUserMode === 'ByMainNode') {
+          if (UserList.length === 0) {
+            return '选择人员'
+          } else if (UserList.length > 0) {
+            return '二次筛选'
+          }
+        } else if (sendUserMode === 'BySendUser') {
+          return '发送时定义'
+        }
+      } else if (!userList) {
+        if (sendUserMode === 'ByDraft') {
+          return '选择人员'
+        } else if (sendUserMode === 'ByMainNode') {
+          return '选择人员'
+        } else if (sendUserMode === 'BySendUser') {
+          return '发送时定义'
+        }
+      }
+    },
+    // 转变状态的显示
+    tranformStatus (status) {
+      return status === true ? '正常' : '异常'
+    },
+    // 获取路由中的参数
+    getQuery () {
+      let query = this.$router.history.current.query
+      if (query) {
+        this.query = Object.assign({}, query)
+
+        this.formState = this.query.FormState
+      }
+    },
+    // 控制步奏的显示
+    isShow (stop) {
+      return this.currentStop === stop
+    },
     cancel () {
+      // 清空选择的数据
+      this.$refs.personSelectList.forEach((item, ItemIndex) => {
+        this.$refs.personSelectList[ItemIndex].setCheckedDefault()
+        this.WorkFlowList[ItemIndex].checked = false
+      })
       // 返回路由
       this.$router.back()
     },
@@ -466,7 +766,9 @@ export default {
     PersonSelectList,
     XTextarea,
     Group,
+    InlineXSwitch,
     CheckIcon,
+    LineBreak,
     PositionUserList
   }
 }
@@ -490,9 +792,11 @@ export default {
     &.slide-enter, &.slide-leave-to{
       transform: translate3d(100%, 0, 0)
     }
-    .after-select-content {
+    .before-select-content, .node-select-content, .after-select-content {
       width: 100%;
       height: 100%;
+    }
+    .before-select-content, .node-select-content, .after-select-content {
       .workflow-select, .people-select, .node-select{
         width: 100%;
         height: calc(100% - 45px);
