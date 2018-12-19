@@ -169,7 +169,7 @@ export default {
       this.FlowActionData(JSON.stringify(params)).then((response) => {
         let value = response.data.value
         let NextNodeList = []
-        console.log(value)
+
         if (value) {
           this.sendResultInfo = Object.assign({}, value)
           NextNodeList = value.NextNodeList.concat()
