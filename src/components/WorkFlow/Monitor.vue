@@ -33,12 +33,10 @@
               </div>
               <div class="history-unit-content">
                 <div class="unit-item unit-role">
-                  <div class="name">{{ item.DeptPositionName }}:</div>
-                  <div class="text">{{ item.UserName }}</div>
+                  <div class="name">{{ item.DeptPositionName }}: {{ item.UserName }}</div>
                 </div>
                 <div class="unit-item unit-content">
-                  <div class="name">意 见:</div>
-                  <div class="text">{{ formatInboxStatus(item) }} {{ item.BeforeContent }}</div>
+                  <div class="name">意 见:{{ formatInboxStatus(item) }} {{ item.BeforeContent }}</div>
                 </div>
               </div>
             </div>
@@ -230,8 +228,8 @@ export default {
                 font-size: 13px;
                 padding: 10px 0;
                 .name {
-                  flex: 0 0 50px;
-                  width: 50px;
+                  flex: 1;
+                  line-height: 20px;
                 }
               }
             }

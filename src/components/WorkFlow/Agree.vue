@@ -362,10 +362,6 @@ export default {
             msg = `${item.NodeName}节点没有选择送审人员`
           }
 
-          if (item.IsMustNotUsers) {
-            msg = `${item.NodeName}节点${item.MustNotUserMessage}`
-          }
-
           if (item.checked) {
             array.push(obj)
           }
