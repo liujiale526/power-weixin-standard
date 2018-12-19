@@ -15,14 +15,23 @@
               >
               <h1 class="node-list-title"
                 @click="nodeListTitleSelect(NextNodeListIndex)"
-              >
+                >
                 <div class="name">{{ NextNodeListItem.NodeName }}</div>
                 <div class="check-box">
                   <check-icon :checked="NextNodeListItem.checked"></check-icon>
                 </div>
               </h1>
               <div v-if="NextNodeListItem.CanSelectUsers.length > 0" class="next-node-list-unit can-select-users">
-                <h1 class="title">可送审人员</h1>
+                <h1 class="title">
+                  <span>可送审人员</span>
+                  <span
+                    class="add-btn"
+                    v-if="_judgeIsByDraft(NextNodeListItem)"
+                    @click="openUserBlock(NextNodeListItem)"
+                    >
+                    {{_defineShowName(NextNodeListItem)}}
+                  </span>
+                </h1>
                 <ul class="people-lists">
                   <li class="people-list"
                       v-for="(CanSelectUsersItem, CanSelectUsersIndex) in NextNodeListItem.CanSelectUsers"
@@ -77,7 +86,8 @@
 
       <position-user-list
         ref="positionUserList"
-        :subParams="positionUserParams"
+        :currentUserList="currentUserList"
+        @complete="completeSelectUser"
       ></position-user-list>
     </div>
   </transition>
@@ -86,7 +96,7 @@
 import { mapActions } from 'vuex'
 import PositionUserList from 'base/position-user-list/position-user-list.vue'
 import PersonSelectList from 'base/person-select-list/person-select-list.vue'
-import { EFlowOperate, EFlowLineType } from 'common/js/config.js'
+import { EFlowOperate, EFlowLineType, ESendUserMode } from 'common/js/config.js'
 import { XTextarea, Group } from 'vux'
 import CheckIcon from 'base/check-icon/check-icon.vue'
 
@@ -94,17 +104,15 @@ export default {
   name: 'workflow',
   data () {
     return {
+      sendResultInfo: {},
       showPeopleContent: true,
       MindInfo: '',
       IsMindMustInput: true,
       NextNodeList: [],
       current: {},
-      positionUserParams: {},
-      SelectPeople: {}
+      currentUserList: [],
+      currentNodeCode: ''
     }
-  },
-  mounted () {
-    this.workNodeLoad()
   },
   computed: {
     // 计算指定容器的高度
@@ -120,6 +128,9 @@ export default {
       return this.query.FormState
     }
   },
+  mounted () {
+    this.workNodeLoad()
+  },
   methods: {
     // 执行数据加载
     workNodeLoad () {
@@ -127,7 +138,7 @@ export default {
         this.getSelectPeople()
       }
     },
-    // 获取 可选人员
+    // 获取 可选人员流程数据
     getSelectPeople () {
       let obj = Object.assign({}, {
         WorkInfoID: this.query.WorkInfoID,
@@ -159,10 +170,8 @@ export default {
         let value = response.data.value
         let NextNodeList = []
         console.log(value)
-
         if (value) {
-          this.SelectPeople = Object.assign({}, value)
-
+          this.sendResultInfo = Object.assign({}, value)
           NextNodeList = value.NextNodeList.concat()
         }
 
@@ -227,11 +236,11 @@ export default {
       let NextNodeList = [...this.NextNodeList]
       let lineChecked = NextNodeList[a].checked
 
-      if (lineChecked) {
+      if (!lineChecked) {
+        this.AlertShowEvent(`请先选择${this.NextNodeList[a].NodeName}节点`)
+      } else {
         NextNodeList[a].CanSelectCopyUsers[b].checked =
         !NextNodeList[a].CanSelectCopyUsers[b].checked
-      } else {
-        this.AlertShowEvent(`请先选择${this.NextNodeList[a].NodeName}节点`)
       }
 
       this.NextNodeList = [...NextNodeList]
@@ -243,7 +252,9 @@ export default {
       let allowMulitUser = NextNodeList[a].AllowMulitUser
       let SelectUserMode = NextNodeList[a].SelectUserMode
 
-      if (lineChecked) {
+      if (!lineChecked) {
+        this.AlertShowEvent(`请先选择${NextNodeList[a].NodeName}节点`)
+      } else {
         if (SelectUserMode === 'SelectAllAndDisabled') {
           this.AlertShowEvent('你没有修改权限')
           return false
@@ -261,8 +272,6 @@ export default {
             }
           })
         }
-      } else {
-        this.AlertShowEvent(`请先选择${NextNodeList[a].NodeName}节点`)
       }
 
       this.NextNodeList = [...NextNodeList]
@@ -272,59 +281,54 @@ export default {
       let NextNodeList = this.NextNodeList
       let checked = NextNodeList[index].checked
       let selectNodeMode = NextNodeList[index].SelectNodeMode
-      let selectUserMode = NextNodeList[index].SelectUserMode
+      let LineType = NextNodeList[index].LineType
+      let IsLastReturnNode = NextNodeList[index].IsLastReturnNode
 
-      if (selectNodeMode === 'SelectedAndDisabled') {
-        this.AlertShowEvent('禁止取消')
-        return false
+      switch (selectNodeMode) {
+        case 'SelectedNode':
+          NextNodeList[index].checked = !checked
+          NextNodeList[index] = Object.assign(NextNodeList[index], this.computedUserIsSelected(NextNodeList[index]))
+          if (LineType === EFlowLineType.ExcludeLine) {
+            NextNodeList.forEach((item, itemIndex) => {
+              if (itemIndex !== index) {
+                NextNodeList[itemIndex].checked = false
+                NextNodeList[itemIndex] = Object.assign(NextNodeList[itemIndex], this.computedUserIsSelected(NextNodeList[itemIndex]))
+              }
+            })
+          }
+          if (IsLastReturnNode) {
+            NextNodeList.forEach((item, itemIndex) => {
+              if (itemIndex !== index) {
+                NextNodeList[itemIndex].checked = false
+                NextNodeList[itemIndex] = Object.assign(NextNodeList[itemIndex], this.computedUserIsSelected(NextNodeList[itemIndex]))
+              }
+            })
+          }
+          break
+        case 'SelectedAndDisabled':
+          this.AlertShowEvent('禁止取消')
+          break
+        default:
+          NextNodeList[index].checked = !checked
+          NextNodeList[index] = Object.assign(NextNodeList[index], this.computedUserIsSelected(NextNodeList[index]))
+          if (LineType === EFlowLineType.ExcludeLine) {
+            NextNodeList.forEach((item, itemIndex) => {
+              if (itemIndex !== index) {
+                NextNodeList[itemIndex].checked = false
+                NextNodeList[itemIndex] = Object.assign(NextNodeList[itemIndex], this.computedUserIsSelected(NextNodeList[itemIndex]))
+              }
+            })
+          }
+          if (IsLastReturnNode) {
+            NextNodeList.forEach((item, itemIndex) => {
+              if (itemIndex !== index) {
+                NextNodeList[itemIndex].checked = false
+                NextNodeList[itemIndex] = Object.assign(NextNodeList[itemIndex], this.computedUserIsSelected(NextNodeList[itemIndex]))
+              }
+            })
+          }
       }
-
-      NextNodeList[index].checked = !checked
-
-      if (!NextNodeList[index].checked) {
-        NextNodeList[index].CanSelectUsers.forEach((item, index) => {
-          item.checked = false
-        })
-
-        NextNodeList[index].CanSelectCopyUsers.forEach((item, index) => {
-          item.checked = false
-        })
-      } else {
-        // 判断是不是排他线
-        if (NextNodeList[index].LineType === EFlowLineType.ExcludeLine) {
-          NextNodeList.forEach((item, itemIndex) => {
-            if (itemIndex !== index) {
-              NextNodeList[itemIndex].checked = false
-              NextNodeList[itemIndex].CanSelectUsers.forEach((userItem) => {
-                userItem.checked = false
-              })
-              NextNodeList[itemIndex].CanSelectCopyUsers.forEach((copyUserItem) => {
-                copyUserItem.checked = false
-              })
-            }
-          })
-        }
-
-        if (NextNodeList[index].AllowMulitUser) {
-          NextNodeList[index].CanSelectUsers.forEach((item, index) => {
-            if (selectUserMode === 'SelectAllAndDisabled') {
-              item.checked = true
-            } else {
-              item.checked = false
-            }
-          })
-        }
-
-        if (NextNodeList[index].CanSelectUsers.length === 1) {
-          NextNodeList[index].CanSelectUsers[0].checked = true
-        }
-
-        NextNodeList[index].CanSelectCopyUsers.forEach((item, index) => {
-          item.checked = false
-        })
-      }
-
-      this.NextNodeList = NextNodeList.concat()
+      this.NextNodeList = [...NextNodeList]
     },
     // 获取选择的节点和人员(送审和抄送) 组织数据
     getSelectedNode () {
@@ -354,8 +358,12 @@ export default {
             }
           })
 
-          if (obj.SendUserList.length === 0 && item.IsMustNotUsers === false) {
+          if (obj.SendUserList.length === 0 && !item.IsMustNotUsers) {
             msg = `${item.NodeName}节点没有选择送审人员`
+          }
+
+          if (item.IsMustNotUsers) {
+            msg = `${item.NodeName}节点${item.MustNotUserMessage}`
           }
 
           if (item.checked) {
@@ -376,79 +384,159 @@ export default {
     // 组织数据，添加权限
     formatNextNodeList (array) {
       let arr = []
+      let mustLists = []
       array.forEach((item, index) => {
-        this.IsMindMustInput = item.IsMindMustInput
-        // if SelectNodeMode === 'SelectedNode | 'SelectedAndDisabled'
-        // 必选 checked = true
-        if (
-          item.SelectNodeMode === 'SelectedNode' ||
-          item.SelectNodeMode === 'SelectedAndDisabled'
-        ) {
-          item.checked = true
-        } else {
-          item.checked = false
+        if (item.IsMindMustInput) {
+          mustLists.push(item)
         }
 
-        // if 节点长度等于1 默认选中
-        if (array.length === 1) {
-          array[0].checked = true
+        switch (item.SelectNodeMode) {
+          // 默认选中
+          case 'SelectedNode':
+            if (item.IsLastReturnNode) {
+              item.checked = false
+            } else {
+              item.checked = true
+            }
+            item = Object.assign(item, this.computedUserIsSelected(item))
+            break
+          // 默认选中 切禁止取消
+          case 'SelectedAndDisabled':
+            item.checked = true
+            item = Object.assign(item, this.computedUserIsSelected(item))
+            break
+          default:
+            item.checked = false
+            item = Object.assign(item, this.computedUserIsSelected(item))
         }
 
-        // 在允许多选的情况下， 可送审人员默认不选中
-        if (item.SelectUserMode === 'DeselectAll') {
-          item.CanSelectUsers.forEach((userItem, userIndex) => {
+        !item.IsCancel && arr.push(item)
+      })
+
+      // if 节点长度等于1 默认选中
+      if (arr.length === 1) {
+        arr[0].checked = true
+      }
+
+      if (mustLists.length > 0) {
+        this.IsMindMustInput = true
+      } else {
+        this.IsMindMustInput = false
+      }
+      return arr
+    },
+    // 计算送审人员是否被选择
+    computedUserIsSelected (item) {
+      let CanSelectUsers = item.CanSelectUsers || []
+      let CanSelectCopyUsers = item.CanSelectCopyUsers || []
+      let SelectUserMode = item.SelectUserMode
+
+      switch (SelectUserMode) {
+        // 默认不选中
+        case 'DeselectAll':
+          CanSelectUsers.forEach((userItem, userIndex) => {
             userItem.checked = false
           })
-        } else if (
-          item.SelectUserMode === 'SelectAll' ||
-          item.SelectUserMode === 'SelectAllAndDisabled') {
-          item.CanSelectUsers.forEach((userItem, userIndex) => {
-            userItem.checked = true
-          })
-        } else {
-          item.CanSelectUsers.forEach((userItem, userIndex) => {
-            if (item.DefaultUserID === userItem.UserID) {
+          break
+        case 'SelectAll':
+          CanSelectUsers.forEach((userItem, userIndex) => {
+            if (item.checked) {
               userItem.checked = true
             } else {
               userItem.checked = false
             }
           })
-        }
-
-        // 如果可送审人员默认只有一个，则默认选中
-        if (item.CanSelectUsers.length === 1) {
-          item.CanSelectUsers[0].checked = true
-        }
-
-        // 如果可抄送人员，默认不选中 个人感觉默认不选中才合理 PC端是默认全部选中
-        if (item.CanSelectCopyUsers.length > 1) {
-          item.CanSelectCopyUsers[0].checked = true
-        } else {
-          item.CanSelectCopyUsers.forEach((copyUsersItem, copyUsersIndex) => {
-            copyUsersItem.checked = false
+          break
+        case 'SelectAllAndDisabled':
+          CanSelectUsers.forEach((userItem, userIndex) => {
+            if (item.checked) {
+              userItem.checked = true
+            } else {
+              userItem.checked = false
+            }
           })
-        }
+          break
+        default:
+          CanSelectUsers.forEach((userItem, userIndex) => {
+            if (item.checked) {
+              if (CanSelectUsers.length === 1) {
+                userItem.checked = true
+              } else {
+                userItem.checked = false
+              }
+            } else {
+              userItem.checked = false
+            }
+          })
+      }
 
-        if (!item.IsCancel) {
-          arr.push(item)
-        }
-      })
-
-      return arr
-    },
-    // 选择一条流程 当前组件调用
-    selectItem (index) {
-      this.$refs.personSelectList.forEach((item, ItemIndex) => {
-        if (index === ItemIndex) {
-          this.$refs.personSelectList[ItemIndex].setChecked()
+      CanSelectCopyUsers.forEach((copyUsersItem, index) => {
+        if (item.checked) {
+          if (CanSelectCopyUsers.length === 1) {
+            copyUsersItem.checked = true
+          } else {
+            copyUsersItem.checked = false
+          }
         } else {
-          this.$refs.personSelectList[ItemIndex].setCheckedDefault()
+          copyUsersItem.checked = false
         }
       })
+
+      return {
+        CanSelectUsers,
+        CanSelectCopyUsers
+      }
     },
+    // 返回路由
     cancel () {
-      // 返回路由
       this.$router.back()
+    },
+    // 打开人员选择面板
+    openUserBlock (node) {
+      this.currentUserList = [...node.CanSelectUsers]
+      this.currentNodeCode = node.NodeCode
+      this.$refs.positionUserList.load()
+    },
+    // 获取自定义起草的人员
+    completeSelectUser (data) {
+      let NextNodeList = [...this.NextNodeList]
+      NextNodeList.forEach((node) => {
+        if (node.NodeCode === this.currentNodeCode) {
+          node.CanSelectUsers = [...data]
+        }
+      })
+
+      this.NextNodeList = [...NextNodeList]
+      this.currentNodeCode = ''
+      this.currentUserList = []
+    },
+    // 判断当前节点是否需要对人员进行起草
+    _judgeIsByDraft (currentSelectNodeList) {
+      if (this.sendResultInfo.IsAllPass) {
+        let SendUserMode = currentSelectNodeList.SendUserMode
+
+        switch (SendUserMode) {
+          case ESendUserMode.Normal:
+            return false
+          case ESendUserMode.ByDraft:
+            return true
+          case ESendUserMode.BySendUser:
+            return false
+          default:
+            return false
+        }
+      } else {
+        return false
+      }
+    },
+    // 判断选择人员的时候 要显示什么名称
+    _defineShowName (currentSelectNodeList) {
+      let CanSelectUsers = currentSelectNodeList.CanSelectUsers
+      if (CanSelectUsers.length > 0) {
+        return '二次筛选'
+      } else {
+        return '选择人员'
+      }
     },
     ...mapActions([
       'GetInformCount',
@@ -537,6 +625,7 @@ export default {
           height: calc(60% - 50px);
           background-color: #ffffff;
           overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
           transition: all 0.3s;
           .next-node-list {
             border-bottom: 20px solid #EBEBEB;
@@ -562,6 +651,10 @@ export default {
                 padding: 10px;
                 font-size: 14px;
                 background-color: #f1f1f1;
+                .add-btn {
+                  float: right;
+                  color: @mainColor;
+                }
               }
               .people-lists {
                 padding: 0 10px;

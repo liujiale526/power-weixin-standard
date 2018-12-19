@@ -7,6 +7,24 @@
           @change="change"
         ></search-box>
       </div>
+      <div class="condition-lists">
+        <div class="condition-list">
+          <div class="text">
+            部门
+          </div>
+          <div @click="changeDepart" class="icon">
+            <check-icon :checked="depart"></check-icon>
+          </div>
+        </div>
+        <div class="condition-list">
+          <div class="text">
+            岗位
+          </div>
+          <div @click="changePosition" class="icon">
+            <check-icon :checked="position"></check-icon>
+          </div>
+        </div>
+      </div>
     </header>
     <line-break></line-break>
     <section class="user-content">
@@ -49,21 +67,15 @@
         <div @click="hide" class="user-action">取消</div>
       </div>
     </section>
-
-    <loading v-model="mx_isLoading"></loading>
-    <toast v-model="mx_toastShow" type="text" :time="mx_deleyTime">{{ afterSaveMsg }}</toast>
-    <alert v-model="mx_alertShow" @on-hide="MixinAlertHideEvent" :title="mx_alertTitle" :content="mx_message"></alert>
   </div>
 </template>
 <script type="text/ecmascript-6">
+import { mapActions } from 'vuex'
 import LineBreak from 'base/line/line.vue'
 import { SearchBox } from 'components/index.js'
 import CheckIcon from 'base/check-icon/check-icon.vue'
-import { commonComponentMixin } from 'common/js/mixin.js'
-import { FlowAction } from 'api/index.js'
 
 export default {
-  mixins: [commonComponentMixin],
   props: {
     currentUserList: {
       type: Array,
@@ -72,25 +84,47 @@ export default {
       }
     }
   },
+  computed: {
+    SourceMode () {
+      if (this.depart) {
+        return 'DeptAndUser'
+      } else {
+        return 'PositionAndUser'
+      }
+    }
+  },
   data () {
     return {
+      depart: true,
+      position: false,
       searchQuery: '',
       UserList: [],
       defaultUserList: [],
       offset: 100,
-      selectedLists: [],
-      afterSaveMsg: '',
-      mx_isLoading: false,
-      mx_message: '',
-      mx_alertShow: false,
-      mx_alertTitle: '提示',
-      mx_toastShow: false,
-      mx_deleyTime: 1000
+      selectedLists: []
     }
   },
   methods: {
     change (query) {
       this.searchQuery = query
+    },
+    // 改变岗位
+    changePosition () {
+      if (this.position) {
+        return false
+      }
+      this.position = !this.position
+      this.depart = !this.depart
+      this.loadPositionUsers()
+    },
+    // 改变 部门
+    changeDepart () {
+      if (this.depart) {
+        return false
+      }
+      this.depart = !this.depart
+      this.position = !this.position
+      this.loadPositionUsers()
     },
     // 加载数据入口 加载数据，显示面板
     load () {
@@ -148,10 +182,10 @@ export default {
     loadPositionUsers () {
       let obj = Object.assign({}, {
         Where: '',
-        Order: 'x1.Name',
-        id: '',
+        order: 'x1.Name',
         SubOperate: 'ReadUserList',
-        SourceMode: 'PositionAndUser',
+        SourceMode: this.SourceMode,
+        ShowAllEps: 'true',
         pageIndex: 0,
         pageSize: 0,
         Current: {},
@@ -160,12 +194,9 @@ export default {
 
       this.selectedLists = this.currentUserList.concat()
 
-      this.MinXinHttpFetch(FlowAction(JSON.stringify(obj)), (response) => {
-        let UserList = []
-        if (response.success) {
-          let value = response.data.value
-          UserList = value.UserList ? JSON.parse(value.UserList).concat() : []
-        }
+      this.FlowActionData(JSON.stringify(obj)).then((response) => {
+        let value = response.data.value
+        let UserList = value.UserList ? JSON.parse(value.UserList).concat() : []
 
         this.UserList = UserList.concat()
 
@@ -175,6 +206,8 @@ export default {
         })
 
         this.defaultUserList = this.UserList.concat()
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
       })
     },
     // 传回选择的数据
@@ -187,7 +220,6 @@ export default {
       })
 
       this.$emit('complete', selectedLists)
-
       this.hide()
     },
     // 执行搜索功能
@@ -224,7 +256,11 @@ export default {
       this.UserList = UserList
       this.selectedLists = []
       this.offset = 100
-    }
+    },
+    ...mapActions([
+      'FlowActionData',
+      'AlertShowEvent'
+    ])
   },
   watch: {
     searchQuery (query) {
@@ -254,13 +290,29 @@ export default {
     background-color: #EBEBEB;
     transition: all 0.3s;
     .header {
-      height: 50px;
+      height: 75px;
       background-color: #ffffff;
       padding: 10px 5px;
+      .condition-lists {
+        display: flex;
+        .condition-list {
+          flex: 1;
+          line-height: 35px;
+          display: flex;
+          .text {
+            flex: 1;
+            font-size: 14px;
+            text-align: right;
+          }
+          .icon {
+            flex: 1;
+          }
+        }
+      }
     }
     .user-content {
       width: 100%;
-      height: calc(100% - 61px);
+      height: calc(100% - 86px);
       .user-inner-content {
         height: calc(100% - 50px);
         overflow-y: auto;
