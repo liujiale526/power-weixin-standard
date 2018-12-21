@@ -7,7 +7,7 @@
       <div class="check-icon-wrap">
         <div class="vux-check-icon">
           <i v-if="checked" class="weui-icon weui_icon_success weui-icon-success"></i>
-          <i v-if="!checked" class="weui-icon weui_icon_circle weui-icon-circle"></i> <span></span>
+          <i v-if="!checked" class="weui-icon weui_icon_circle weui-icon-circle"></i>
         </div>
       </div>
     </div>
@@ -16,19 +16,11 @@
 <script type="text/ecmascript-6">
 export default {
   props: {
-    isChecked: {
-      type: Boolean,
+    selectedWorkFlows: {
+      type: Array,
       default () {
-        return false
+        return []
       }
-    },
-    index: {
-      type: Number,
-      default: 0
-    },
-    selectType: {
-      type: String,
-      default: 'single'
     },
     item: {
       type: Object,
@@ -37,22 +29,14 @@ export default {
       }
     }
   },
-  data () {
-    return {
-      checked: false
-    }
-  },
-  methods: {
-    setChecked (checkedValue) {
-      this.checked = !this.checked
+  computed: {
+    WorkFlowIDs () {
+      return this.selectedWorkFlows.map((item) => {
+        return item.WorkFlowID
+      })
     },
-    setCheckedDefault (checkedValue) {
-      this.checked = false
-    }
-  },
-  watch: {
-    checked (newChecked) {
-      this.$emit('selectFlowItem', this.item, this.checked, this.index)
+    checked () {
+      return this.WorkFlowIDs.includes(this.item.WorkFlowID)
     }
   }
 }

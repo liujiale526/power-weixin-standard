@@ -1,5 +1,7 @@
 <template>
-  <div ref="positionUserList" class="position-user-list" :style="{'transform': 'translate3d(' + this.offset + '%, 0, 0)'}">
+  <div ref="positionUserList"
+    class="position-user-list"
+    :style="{'transform': 'translate3d(' + offset + '%, 0, 0)'}">
     <header class="header">
       <div class="search-box-wrap">
         <search-box placeholder="搜索人员姓名/编号/岗位、部门"
@@ -31,7 +33,7 @@
       <div class="user-inner-content">
         <ul class="user-lists">
           <li class="user-list"
-            v-for="(item, index) in UserList" :key="index"
+            v-for="(item, index) in UserList" :key="index + '@' +item.UserID"
             @click="selectItem(index)"
             >
             <div class="user-list-inner">
@@ -64,7 +66,32 @@
       </div>
       <div class="user-action-bar">
         <div @click="getSelectedUsers" class="user-action">确定</div>
+        <div @click="openPrevBlock" class="user-action">预览</div>
         <div @click="hide" class="user-action">取消</div>
+      </div>
+    </section>
+    <section class="prev-view-block" :style="{'transform': 'translate3d(' + prevOffset + '%, 0, 0)'}">
+      <h1 class="title">已选择的人员</h1>
+      <div class="prev-view-wrap">
+        <ul class="prev-view-lists">
+          <li
+            class="prev-view-list"
+            v-for="userItem in selectedLists"
+            :key="'prev@' + userItem.UserID"
+            >
+            <div class="prev-list-msg">
+              {{userItem.UserName}} ({{userItem.DeptPositionName}})
+            </div>
+            <div @click="deletePrevItem(userItem)" class="prev-delete-wrap">
+              <i class="cubeic-close"></i>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="prev-view-actions">
+        <div @click="closePrevBlock" class="prev-view-action">
+          关闭
+        </div>
       </div>
     </section>
   </div>
@@ -101,12 +128,31 @@ export default {
       UserList: [],
       defaultUserList: [],
       offset: 100,
+      prevOffset: 100,
       selectedLists: []
     }
   },
   methods: {
     change (query) {
       this.searchQuery = query
+    },
+    // 关闭预览面板
+    closePrevBlock () {
+      this.prevOffset = 100
+    },
+    // 打开预览面板
+    openPrevBlock () {
+      this.prevOffset = 0
+    },
+    // 删除预览中的数据
+    deletePrevItem (item) {
+      let arr = [...this.selectedLists]
+      let UserIDs = arr.map((item) => {
+        return item.UserID
+      })
+      let index = UserIDs.indexOf(item.UserID)
+      arr.splice(index, 1)
+      this.selectedLists = [...arr]
     },
     // 改变岗位
     changePosition () {
@@ -280,6 +326,8 @@ export default {
 </script>
 <style lang="less" rel="stylesheet/less">
   @import "~common/styles/mixin.less";
+  @import "~common/styles/colors.less";
+
   .position-user-list {
     position: absolute;
     top: 0;
@@ -365,9 +413,65 @@ export default {
           flex: 1;
           text-align: center;
           font-size: 14px;
-          &:first-child{
+          border-right: 1px solid #dddddd;
+          &:last-child{
             border-right: 1px solid #dddddd;
           }
+        }
+      }
+    }
+    .prev-view-block {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      background-color: @commonBGColor;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s;
+      .title {
+        flex: 0 0 40px;
+        padding: 0 10px;
+        line-height: 40px;
+        color: @mainColor;
+        .bottom-line();
+      }
+      .prev-view-wrap {
+        flex: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        .prev-view-lists {
+          padding: 5px 10px 5px 10px;
+          .prev-view-list {
+            display: flex;
+            .bottom-line();
+            &:last-child {
+              &:after {
+                height: 0;
+              }
+            }
+            .prev-list-msg {
+              flex: 1;
+              line-height: 40px;
+              font-size: 14px;
+            }
+            .prev-delete-wrap {
+              flex: 0 0 35px;
+              font-size: 16px;
+              line-height: 40px;
+              text-align: center;
+            }
+          }
+        }
+      }
+      .prev-view-actions {
+        flex: 0 0 50px;
+        .top-line();
+        .prev-view-action {
+          line-height: 50px;
+          text-align: center;
+          font-size: 14px;
         }
       }
     }
