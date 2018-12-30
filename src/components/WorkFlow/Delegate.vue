@@ -228,7 +228,6 @@ export default {
 
         if (value.DelegateItem) {
           this.delegateItem = Object.assign({}, value.DelegateItem)
-          this.delegateItem = Object.assign({}, value.DelegateItem)
           this.RootUserInfo = this.delegateItem.RootUserInfo
           this.defaultUserList = this.delegateItem.UserList.concat()
           this.UserList = [this.RootUserInfo].concat(this.delegateItem.UserList)
