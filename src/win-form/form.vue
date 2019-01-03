@@ -23,9 +23,8 @@
           <div class="main-table-item" for="主表"
             v-if="tableItem.type === 'mainTable'"
             >
-            <form class="input-textarea-group">
+            <form class="input-textarea-group" v-if="tableItem.tableShowField.length > 0 && KeyWord !== ''">
               <form-row
-                v-if="tableItem.tableShowField.length > 0 && KeyWord !== ''"
                 v-for="fieldItem in tableItem.tableShowField"
                 :key="fieldItem.field"
                 :label="fieldItem.title"
