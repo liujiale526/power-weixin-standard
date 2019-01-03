@@ -36,9 +36,8 @@
             <div class="text">人员列表:</div>
             <div @click="openUsersBlock" class="btn">选择人员</div>
           </h1>
-          <ul class="user-lists">
+          <ul class="user-lists" v-if="UserList.length > 0">
             <li class="user-list"
-              v-if="UserList.length > 0"
               v-for="(item, index) in UserList" :key="index"
               >
               <div v-if="index === 0 && !item.isBootLast" class="list-inner">
