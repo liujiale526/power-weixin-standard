@@ -183,7 +183,6 @@ export default {
         this.openformid = this.config.openformid
 
         this.windowConfig = JSON.parse(value[0].WeixinExtJson)
-
         this.getWindowConfigForUI(this.windowConfig)
         callback && callback()
       }).catch((e) => {
@@ -219,7 +218,7 @@ export default {
         size: this.pageSize,
         swhere: '1=1 and EpsProjId=\'' + EpsProjId + '\'',
         select: '',
-        sort: config.joindata.sort || '',
+        sort: config.joindata.sort || ' RegDate DESC ',
         extparams: ''
       }
 
