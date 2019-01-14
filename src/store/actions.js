@@ -32,8 +32,28 @@ import {
   FormData,
   APIMessages,
   getEpsProjects,
-  SwitchEpsProject
+  SwitchEpsProject,
+  getUserSessionData
 } from 'api'
+
+// 打开没有配置微信config的页面  需要重置 session
+export const GetUserSessionData = function ({commit}, params) {
+  return new Promise((resolve, reject) => {
+    commit(types.SHOWLOADING, true)
+    getUserSessionData(params).then((res) => {
+      commit(types.SHOWLOADING, false)
+      let result = res.data
+      if (result.success) {
+        resolve(result)
+      } else {
+        reject(getError(result.message))
+      }
+    }).catch((e) => {
+      commit(types.SHOWLOADING, false)
+      reject(e)
+    })
+  })
+}
 
 // 切换项目相关
 // 获取项目和EPS

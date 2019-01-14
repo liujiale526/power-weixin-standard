@@ -20,7 +20,7 @@
               @pulling-down="onPullingDown"
               @pulling-up="onPullingUp"
             >
-              <ul class="form-lists">
+              <ul class="form-lists" v-if="formList.length > 0">
                 <li v-if="tableType === 'table'" class="title-lists">
                   <div v-if="option.title" class="title-list title">
                     {{ option.title.title }}
@@ -35,7 +35,7 @@
                     {{ option.right.title }}
                   </div>
                 </li>
-                <li v-if="formList.length > 0"
+                <li
                     @click.prevent="openForm(item)"
                     v-for="item in formList" :key="item[idfield]"
                     class="form-list-unit">
@@ -137,12 +137,12 @@ export default {
   methods: {
     // 组织配置信息
     getWindowConfigForUI (windowConfig) {
+      console.log(windowConfig)
       let option = {
         title: windowConfig.title,
         left: windowConfig.left,
         center: windowConfig.center,
-        right: windowConfig.right,
-        tag: windowConfig.tag
+        right: windowConfig.right
       }
 
       if (windowConfig.tag) {
@@ -158,7 +158,7 @@ export default {
 
       this.option = Object.assign(this.option, option)
       this.tableType = getTableType(windowConfig.tableListType)
-      document.title = windowConfig.winTitle
+      document.title = windowConfig.winTitle || '窗体'
     },
     windowLoad (callback) {
       let formstate = this.$router.history.current.params.formstate
@@ -166,7 +166,7 @@ export default {
         this._MenuWidget(() => {
           this._FormInit(() => {
             this._GridPageLoad(this.config, (data) => {
-              this.formList = data
+              this.formList = [...data]
               callback && callback()
             })
           })
@@ -213,7 +213,7 @@ export default {
 
       let params = {
         KeyWord: config.joindata.KeyWord,
-        KeyWordType: 'BO',
+        KeyWordType: config.joindata.KeyWordType || 'BO',
         index: this.pageIndex,
         size: this.pageSize,
         swhere: '1=1 and EpsProjId=\'' + EpsProjId + '\'',

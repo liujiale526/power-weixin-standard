@@ -441,3 +441,13 @@ export function deleteFile (id) {
     }
   })
 }
+
+// 重置session
+export function getUserSessionData (params) {
+  return axios.get('/Weixin/GetUserSession', {
+    params: Object.assign({
+      sessionId: '',
+      userId: ''
+    }, params)
+  })
+}

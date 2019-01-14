@@ -158,7 +158,7 @@ import {
   settingActionPermission,
   getTabShowRight
 } from 'common/js/Util.js'
-
+import { getStoreUserSession } from 'api/UserSession.js'
 import { saveFromDataParams } from 'common/js/form.js'
 
 const DIRICTION_H = 'horizontal'
@@ -307,7 +307,16 @@ export default {
       let query = `?FormId=${FromId}&KeyValue=${Id}`
       let link = `${baseLink}/${formstate}/${Id}/${Base64.encode(FromId)}${query}`
 
-      window.open(link, '_self')
+      let storeUserSession = getStoreUserSession()
+      let params = {
+        sessionId: storeUserSession.SessionId,
+        userId: storeUserSession.UserId
+      }
+      this.GetUserSessionData(params).then((res) => {
+        window.open(link, '_self')
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
+      })
     },
     // 判断tab的显示方法
     checkSwitchPermission (formConfigUI, formData, value, subPermission) {
@@ -638,7 +647,8 @@ export default {
       'FlowActionData',
       'UpDateFormData',
       'AlertShowEvent',
-      'ToastShowEvent'
+      'ToastShowEvent',
+      'GetUserSessionData'
     ])
   },
   destroyed () {
