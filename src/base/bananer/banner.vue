@@ -6,7 +6,7 @@
         <div class="project-message">
           <div class="project-msg-wrap">
             <div class="project-name">
-              <p>{{ projectInfo.project_name || '' }}</p>
+              <p>{{ projectInfo.project_name || '请选择项目' }}</p>
             </div>
           </div>
           <div @click="changeShow" class="icon-wrap">
@@ -93,7 +93,8 @@ export default {
         this.setProjectInfo(response.data)
         this.projectInfoMsg = Object.assign({}, response.data)
       }).catch((e) => {
-        this.AlertShowEvent(e)
+        // this.AlertShowEvent(e.message)
+        console.log(e.message)
       })
     },
     _formatDate (time) {
