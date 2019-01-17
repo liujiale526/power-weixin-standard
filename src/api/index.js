@@ -444,7 +444,7 @@ export function deleteFile (id) {
 
 // 重置session
 export function getUserSessionData (params) {
-  return axios.get('/Weixin/GetUserSession', {
+  return axios.get('/Weixin/GetUserSessionTwo', {
     params: Object.assign({
       sessionId: '',
       userId: ''
