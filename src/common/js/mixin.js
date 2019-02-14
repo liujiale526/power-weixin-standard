@@ -2,7 +2,7 @@ import { systemConfig } from 'common/js/config.js'
 import { getUserSession, storeUserSession } from 'api/UserSession'
 import { Loading, Alert, Toast, XTextarea, Group } from 'vux'
 import { DatePicker } from 'cube-ui'
-import { formatDate } from 'common/js/Util.js'
+import { formatDate, clearStorage } from 'common/js/Util.js'
 
 import {
   NavList,
@@ -123,5 +123,18 @@ export const commonMixin = {
     Loading,
     Alert,
     Toast
+  }
+}
+
+export const errLoginMixin = {
+  methods: {
+    errLogin (e) {
+      if (e.message === '201') {
+        clearStorage()
+        this.$router.push('/login')
+      } else {
+        this.AlertShowEvent(e.message)
+      }
+    }
   }
 }

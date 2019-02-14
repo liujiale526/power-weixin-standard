@@ -91,11 +91,13 @@ import { mapGetters, mapActions } from 'vuex'
 import { getStoreUserSession } from 'api/UserSession.js'
 import { clearStorage, formatDate } from 'common/js/Util.js'
 import { systemConfig } from 'common/js/config.js'
+import { errLoginMixin } from 'common/js/mixin.js'
 
 const debug = process.env.NODE_ENV !== 'production'
 const IMGBOOTURL = '/PowerPlat/Control/File.ashx?action=browser&_type=ftp&_fileid='
 
 export default {
+  mixins: [errLoginMixin],
   name: 'Setting',
   data () {
     return {
@@ -177,14 +179,19 @@ export default {
     // 加载数据
     settingLoad (callback) {
       this.GetInformCount().catch((e) => {
-        this.AlertShowEvent(e.message)
+        if (e.message === '201') {
+          clearStorage()
+          this.$router.push('/login')
+        } else {
+          this.AlertShowEvent(e.message)
+        }
       })
 
       if (!this.isAdmin) {
         this.setUserInfo().then(() => {
           if (callback) { callback() }
         }).catch((e) => {
-          this.AlertShowEvent(e.message)
+          this.errLogin(e)
         })
       } else {
         if (callback) { callback() }
@@ -207,7 +214,7 @@ export default {
         clearStorage()
         this.$router.push('/login')
       }).catch((e) => {
-        this.AlertShowEvent(e.message)
+        this.errLogin(e)
       })
     },
     // 日期

@@ -66,6 +66,7 @@ import {
 
 import { formatDate, searchLists } from 'common/js/Util.js'
 import { systemConfig } from 'common/js/config.js'
+import { errLoginMixin } from 'common/js/mixin.js'
 
 const debug = process.env.NODE_ENV !== 'production'
 const isProject = '1'
@@ -74,6 +75,7 @@ const DATATYPE = 'yyyy-MM-dd HH:mm:ss'
 const SWICTHSUCCESS = '切换成功'
 
 export default {
+  mixins: [errLoginMixin],
   name: 'changeproject',
   data () {
     return {
@@ -135,7 +137,7 @@ export default {
           }
         }
       }).catch((e) => {
-        this.AlertShowEvent(e.message)
+        this.errLogin(e)
       })
     },
     // 选择项目
@@ -152,10 +154,10 @@ export default {
             this.back()
           }, 1000)
         }).catch((e) => {
-          this.AlertShowEvent(e.message)
+          this.errLogin(e)
         })
       }).catch((e) => {
-        this.AlertShowEvent(e.message)
+        this.errLogin(e)
       })
     },
     // search start

@@ -51,7 +51,7 @@
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 import { ProjectInfo } from 'api/index.js'
 import { getStoreUserSession } from 'api/UserSession.js'
-import { formatDate } from 'common/js/Util.js'
+import { formatDate, clearStorage } from 'common/js/Util.js'
 
 export default {
   props: {
@@ -93,8 +93,12 @@ export default {
         this.setProjectInfo(response.data)
         this.projectInfoMsg = Object.assign({}, response.data)
       }).catch((e) => {
-        // this.AlertShowEvent(e.message)
         console.log(e.message)
+        if (e.message === '201') {
+          clearStorage()
+          this.$router.push('/login')
+        }
+        // this.AlertShowEvent(e.message)
       })
     },
     _formatDate (time) {

@@ -148,7 +148,7 @@ import {
   FormRow
 } from 'components/index.js'
 
-import { formComponentMixin } from 'common/js/mixin.js'
+import { formComponentMixin, errLoginMixin } from 'common/js/mixin.js'
 import {
   formatFormAllConfig,
   formatFromDataToView,
@@ -167,7 +167,7 @@ const UPDATESUCCESS = '更新数据完毕'
 
 export default {
   name: 'h5Form',
-  mixins: [formComponentMixin],
+  mixins: [formComponentMixin, errLoginMixin],
   data () {
     return {
       currentIndex: 0,
@@ -247,7 +247,7 @@ export default {
           this.$router.back()
         }
       }).catch((e) => {
-        this.AlertShowEvent(e.message)
+        this.errLogin(e)
       })
     },
     // 从获取的配置信息赋予当前表单
@@ -297,7 +297,7 @@ export default {
             }
           }
         }).catch((e) => {
-          this.AlertShowEvent(e.message)
+          this.errLogin(e)
         })
       }
     },
@@ -366,7 +366,7 @@ export default {
           this.mainformData = Object.assign({}, mainformData)
         }
       }).catch((e) => {
-        this.AlertShowEvent(e.message)
+        this.errLogin(e)
       })
     },
     // 获取表单的所有子表信息
@@ -392,7 +392,7 @@ export default {
           })
         })
       }).catch((e) => {
-        this.AlertShowEvent(e.message)
+        this.errLogin(e)
       })
     },
     // 走流程之前都要更新的数据

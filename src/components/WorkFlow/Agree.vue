@@ -172,7 +172,7 @@ export default {
 
         if (value) {
           this.sendResultInfo = Object.assign({}, value)
-          NextNodeList = value.NextNodeList.concat()
+          NextNodeList = value.NextNodeList || NextNodeList
         }
 
         this.current = Object.assign({}, value.Current)
@@ -560,7 +560,7 @@ export default {
   @import "~common/styles/colors.less";
 
   .work-node-select {
-    position: fixed;
+    position: absolute;
     top: 0;
     bottom: 0;
     left: 0;

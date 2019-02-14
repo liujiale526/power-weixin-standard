@@ -9,9 +9,8 @@
             </div>
           </header>
           <line-break></line-break>
-          <ul class="select-lists">
+          <ul class="select-lists" v-if="WorkFlowList.length > 0">
             <li class="select-list"
-                v-if="WorkFlowList.length > 0"
                 v-for="item in WorkFlowList"
                 @click="selectItem(item)"
                 :key="item.WorkFlowID">
@@ -886,7 +885,7 @@ export default {
   @import "~common/styles/colors.less";
 
   .work-node-select {
-    position: fixed;
+    position: absolute;
     top: 0;
     bottom: 0;
     left: 0;

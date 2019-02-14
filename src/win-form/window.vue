@@ -76,8 +76,10 @@ import FooterBar from 'base/footer-bar/footer-bar.vue'
 
 import { getStoreUserSession } from 'api/UserSession.js'
 import { removeList, searchLists, getTableType } from 'common/js/Util.js'
+import { errLoginMixin } from 'common/js/mixin.js'
 
 export default {
+  mixins: [errLoginMixin],
   name: 'window',
   data () {
     return {
@@ -186,7 +188,7 @@ export default {
         this.getWindowConfigForUI(this.windowConfig)
         callback && callback()
       }).catch((e) => {
-        this.AlertShowEvent(e.message)
+        this.errLogin(e)
       })
     },
     _FormInit (callback) {
@@ -200,7 +202,7 @@ export default {
         this.comboboxdata = Object.assign({}, JSON.parse(response.data.comboboxdata))
         callback && callback()
       }).catch((e) => {
-        this.AlertShowEvent(e.message)
+        this.errLogin(e)
       })
     },
     // 加载窗体中的数据
@@ -230,7 +232,7 @@ export default {
         }
         callback && callback(getData)
       }).catch((e) => {
-        this.AlertShowEvent(e.message)
+        this.errLogin(e)
       })
     },
     // 删除表单数据
@@ -256,7 +258,7 @@ export default {
         callback && callback()
         this._deleteSuccess(200)
       }).catch((e) => {
-        this.AlertShowEvent(e.message)
+        this.errLogin(e)
         this._deleteSuccess(400)
       })
     },

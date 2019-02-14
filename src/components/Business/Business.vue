@@ -39,12 +39,12 @@
 <script type="text/ecmascript-6">
 import { mapActions } from 'vuex'
 import { Bananer, ListUnit } from 'components/index.js'
-import { commonComponentMixin } from 'common/js/mixin.js'
+import { commonComponentMixin, errLoginMixin } from 'common/js/mixin.js'
 import { setFontColor, getChildrenMenu, getNextHigherLevel } from 'common/js/Util.js'
 
 export default {
   name: 'Project',
-  mixins: [commonComponentMixin],
+  mixins: [commonComponentMixin, errLoginMixin],
   data () {
     return {
       menuListsHeight: 250,
@@ -106,7 +106,7 @@ export default {
           }
         }
       }).catch((e) => {
-        this.AlertShowEvent(e.message)
+        this.errLogin(e)
       })
     },
     // 打开表单或者打开菜单

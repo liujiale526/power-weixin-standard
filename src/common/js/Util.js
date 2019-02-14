@@ -923,8 +923,12 @@ function reFindDataItem (data, value, ValueField) {
 }
 
 // 检测是否还是持续登录的状态
-function checkLoginTime (TokenMsg) {
+export function checkLoginTime (TokenMsg) {
   let nowTime = (new Date()).getTime()
+
+  if (!TokenMsg.exp) {
+    return false
+  }
 
   if ((nowTime - TokenMsg.exp) > 0) {
     return true
