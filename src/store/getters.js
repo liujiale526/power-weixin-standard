@@ -18,3 +18,5 @@ export const InformCount = state => state.InformCount
 export const Alert = state => state.Alert
 // 获取Toast
 export const Toast = state => state.Toast
+// 获取tokenErr
+export const tokenErr = state => state.tokenErr

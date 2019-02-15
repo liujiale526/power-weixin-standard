@@ -43,6 +43,10 @@ const mutations = {
   // 设置toast
   [types.TOAST] (state, toast) {
     state.Toast = Object.assign({}, toast)
+  },
+  // 设置tokenErr
+  [types.TOKENERR] (state, TOKENERR) {
+    state.tokenErr = TOKENERR
   }
 }
 

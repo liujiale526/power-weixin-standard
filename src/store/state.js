@@ -20,7 +20,8 @@ const state = {
     show: false,
     time: 1000,
     text: ''
-  }
+  },
+  tokenErr: false
 }
 
 export default state

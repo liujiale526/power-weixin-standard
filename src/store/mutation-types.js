@@ -18,3 +18,5 @@ export const INFORMCOUNT = 'INFORMCOUNT'
 export const ALERT = 'ALERT'
 // 设置Toast
 export const TOAST = 'TOAST'
+// token error
+export const TOKENERR = 'TOKENERR'

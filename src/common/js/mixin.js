@@ -3,6 +3,7 @@ import { getUserSession, storeUserSession } from 'api/UserSession'
 import { Loading, Alert, Toast, XTextarea, Group } from 'vux'
 import { DatePicker } from 'cube-ui'
 import { formatDate, clearStorage } from 'common/js/Util.js'
+import { mapMutations } from 'vuex'
 
 import {
   NavList,
@@ -131,10 +132,14 @@ export const errLoginMixin = {
     errLogin (e) {
       if (e.message === '201') {
         clearStorage()
+        this.SetTokenError(true)
         this.$router.push('/login')
       } else {
         this.AlertShowEvent(e.message)
       }
-    }
+    },
+    ...mapMutations({
+      'SetTokenError': 'TOKENERR'
+    })
   }
 }

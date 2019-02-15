@@ -1,5 +1,8 @@
 <template>
   <div class="login-box">
+    <div v-if="tokenErr" class="token-error-wrap">
+      登录超时,等重新登录
+    </div>
     <div class="login-logo">
       <img class="logo-bg" src="./login-banner.png">
       <div class="logo-content">
@@ -36,7 +39,7 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-import { mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 import { getTokenString } from 'api/login.js'
 
 const debug = process.env.NODE_ENV !== 'production'
@@ -55,6 +58,11 @@ export default {
   },
   created () {
     this.keydownEvent()
+  },
+  computed: {
+    ...mapGetters([
+      'tokenErr'
+    ])
   },
   mounted () {
     let Token = getTokenString()
@@ -89,6 +97,7 @@ export default {
         Name: this.Name,
         PassWord: this.PassWord
       }).then(() => {
+        this.SetTokenError(false)
         // 在执行获取UserSession
         this.GetUserSession().then((res) => {
           let { HumanId } = res
@@ -110,7 +119,10 @@ export default {
       'LoginIN',
       'GetUserSession',
       'AlertShowEvent'
-    ])
+    ]),
+    ...mapMutations({
+      'SetTokenError': 'TOKENERR'
+    })
   },
   destroyed () {
     this.unbindKeyDown()
@@ -129,6 +141,19 @@ export default {
     bottom: 0;
     z-index: 100;
     .baseBgColor();
+    .token-error-wrap {
+      height: 40px;
+      width: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 100;
+      background-color: rgba(0, 0, 0, 0.6);
+      line-height: 40px;
+      text-align: center;
+      font-size: 16px;
+      color: red;
+    }
     .login-logo {
         position: relative;
         width: 100%;
