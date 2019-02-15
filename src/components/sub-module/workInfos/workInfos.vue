@@ -168,8 +168,10 @@
 import { mapActions } from 'vuex'
 import { SwitchesBox, SearchBox, backBtn } from 'components'
 import { findIndex, formatDate } from 'common/js/Util.js'
+import { errLoginMixin } from 'common/js/mixin.js'
 
 export default {
+  mixins: [errLoginMixin],
   name: 'workflow',
   data () {
     return {
@@ -281,7 +283,7 @@ export default {
         option.success && option.success(res.data)
       }).catch((e) => {
         this.ready = false
-        this.AlertShowEvent(e.message)
+        this.errLogin(e)
       })
     },
     // 获取数据的分类

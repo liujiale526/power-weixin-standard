@@ -37,11 +37,11 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapGetters, mapActions } from 'vuex'
-import { commonComponentMixin } from 'common/js/mixin.js'
+import { commonComponentMixin, errLoginMixin } from 'common/js/mixin.js'
 import { formatDate } from 'common/js/Util.js'
 
 export default {
-  mixins: [commonComponentMixin],
+  mixins: [commonComponentMixin, errLoginMixin],
   data () {
     return {}
   },
@@ -62,7 +62,7 @@ export default {
       this.HasReadMessage(item).then(() => {
         this.ToastShowEvent('已读')
       }).catch((e) => {
-        this.AlertShowEvent(e.message)
+        this.errLogin(e)
       })
     },
     // 返回

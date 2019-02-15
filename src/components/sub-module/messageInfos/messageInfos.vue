@@ -169,9 +169,11 @@
 import { mapMutations, mapActions } from 'vuex'
 import { SwitchesBox, SearchBox, backBtn } from 'components'
 import { findIndex, formatDate } from 'common/js/Util.js'
+import { errLoginMixin } from 'common/js/mixin.js'
 
 export default {
   name: 'workflow',
+  mixins: [errLoginMixin],
   data () {
     return {
       searchQuery: '',
@@ -306,10 +308,10 @@ export default {
             this.GetInformCount().then(() => {
               this.$router.push(url)
             }).catch((e) => {
-              this.AlertShowEvent(e.message)
+              this.errLogin(e)
             })
           }).catch((e) => {
-            this.AlertShowEvent(e.message)
+            this.errLogin(e)
           })
         }
       }
@@ -336,7 +338,7 @@ export default {
         }
       }).catch((e) => {
         this.ready = false
-        this.AlertShowEvent(e.message)
+        this.errLogin(e)
       })
     },
     // 获取数据的分类

@@ -51,13 +51,16 @@
 </template>
 
 <script type="text/ecmascript-6">
+import { mapActions } from 'vuex'
 import LineBreak from 'base/line/line.vue'
 import { Loading, Alert, Toast } from 'vux'
 import { ChangePass, PassRole } from 'api/index.js'
+import { errLoginMixin } from 'common/js/mixin.js'
 
 const NotEqual = '新密码和重复新密码不一致'
 
 export default {
+  mixins: [errLoginMixin],
   data () {
     return {
       title: '修改密码',
@@ -90,8 +93,6 @@ export default {
       let minLength =
         this.PassRoleObj.minLength ? ' 密码长度不少于' + this.PassRoleObj.minLength + '位' : ''
 
-      // let hasValidation = this.PassRoleObj.hasValidation
-
       return `新密码强度:${hasEnglish}${hasNumber} ${hasSymbol}${minLength}`
     },
     PassRole (callback) {
@@ -100,6 +101,8 @@ export default {
         if (callback) {
           callback()
         }
+      }).catch((e) => {
+        this.errLogin(e)
       })
     },
     // 修改密码
@@ -128,7 +131,6 @@ export default {
       this.isLoading = true
       ChangePass(this.OldPass, this.NewPass).then((response) => {
         this.isLoading = false
-        console.log(response)
         if (!response.success) {
           this.alertShowEvent(response.message)
         } else {
@@ -137,7 +139,7 @@ export default {
         }
       }).catch((e) => {
         this.isLoading = false
-        this.alertShowEvent(e.message)
+        this.errLogin(e)
       })
     },
     _deleyClear () {
@@ -150,7 +152,10 @@ export default {
         this.NewPass = ''
         this.reNewPass = ''
       }, this.deleyTime)
-    }
+    },
+    ...mapActions([
+      'AlertShowEvent'
+    ])
   },
   components: {
     LineBreak,
