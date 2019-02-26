@@ -233,6 +233,7 @@ export default {
     let that = this
     this._MyMessageInfos({
       success (data) {
+        console.log(data)
         that.Infos = [...data.infos]
         that.Actived = [...data.actived]
         that.Join = [...data.join]

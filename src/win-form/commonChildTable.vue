@@ -48,23 +48,25 @@
     </div>
     <div class="chile-table-lists-form" :style="{'transform': 'translate3d(' + this.offset + '%, 0, 0)'}">
       <form class="input-textarea-group">
-        <form-row
-          v-if="tableShowField.length > 0"
-          v-for="(fieldItem, fieldIndex) in tableShowField"
-          :key="fieldIndex"
-          :label="fieldItem.title"
-          :type="fieldItem.format"
-          :readonly="fieldItem.readonly"
-          :required="fieldItem.required"
-          :disabled="fieldItem.disabled"
-          :placeholder="fieldItem.placeholder"
-          :field="fieldItem.field"
-          :KeyWord="KeyWord"
-          :fieldItem="fieldItem"
-          :mainformData="currentItem"
-          :comboboxdata="comboboxdata"
-          @enterChange="formRowChange"
-        ></form-row>
+        <div v-if="tableShowField.length > 0">
+          <form-row
+            v-for="(fieldItem, fieldIndex) in tableShowField"
+            :key="fieldIndex"
+            :label="fieldItem.title"
+            :type="fieldItem.format"
+            :readonly="fieldItem.readonly"
+            :required="fieldItem.required"
+            :disabled="fieldItem.disabled"
+            :placeholder="fieldItem.placeholder"
+            :field="fieldItem.field"
+            :KeyWord="KeyWord"
+            :fieldItem="fieldItem"
+            :mainformData="currentItem"
+            :comboboxdata="comboboxdata"
+            :submit="submit"
+            @enterChange="formRowChange"
+          ></form-row>
+        </div>
         <div v-if="chileTableItem.subTable === 'withAttach'" class="sub-file-attach-warp">
           <h1 class="sub-file-attach-title font-color-active">附件列表:</h1>
           <sub-file-attach
@@ -97,7 +99,7 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import {
   SearchBox,
   FormList,
@@ -216,6 +218,7 @@ export default {
       subTableShowField: [],
       tableType: '',
       selectId: '',
+      submit: false,
       mx_isLoading: false,
       mx_message: '',
       mx_alertShow: false,
@@ -230,6 +233,29 @@ export default {
     this.tableInit()
   },
   methods: {
+    verifyRequireError: function (currentItem, controls) {
+      this.submit = true
+      let arr = [...controls]
+      let requiredFields = arr.filter((item) => {
+        if (item.required) {
+          return item
+        }
+      })
+
+      if (requiredFields.length === 0) {
+        return false
+      }
+
+      for (let i = 0; i < requiredFields.length; i++) {
+        let item = requiredFields[i]
+
+        if (!currentItem[item.field]) {
+          return true
+        }
+      }
+
+      return false
+    },
     // 初始化
     tableInit () {
       let textNameOption = this.chileTableItem.textNameOption
@@ -291,6 +317,16 @@ export default {
         data: [this.currentItem],
         formDate: formDate,
         FormId: this.routerParams.FromId
+      }
+
+      this.tableShowField.forEach((item) => {
+        item.required = true
+      })
+
+      let verify = this.verifyRequireError(this.currentItem, this.tableShowField)
+      if (verify) {
+        this.AlertShowEvent('请补充必填项')
+        return false
       }
 
       let params = organizeParams(obj)
@@ -406,7 +442,11 @@ export default {
     // 关闭面板
     closeEditBlock () {
       this.offset = 100
-    }
+    },
+    ...mapActions([
+      'AlertShowEvent',
+      'ToastShowEvent'
+    ])
   },
   watch: {
     tableData: {

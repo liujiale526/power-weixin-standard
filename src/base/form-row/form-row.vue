@@ -12,6 +12,7 @@
         :required="required"
         :disabled="canEdit"
         :placeholder="placeholder">
+        <i v-if="showImportant" class="icon cubeic-important"></i>
       </div>
     </div>
 
@@ -27,6 +28,7 @@
         :required="required"
         :disabled="canEdit"
         :placeholder="placeholder">
+        <i v-if="showImportant" class="icon cubeic-important"></i>
       </div>
     </div>
 
@@ -42,6 +44,7 @@
         :required="required"
         :disabled="canEdit"
         :placeholder="placeholder">
+        <i v-if="showImportant" class="icon cubeic-important"></i>
       </div>
     </div>
 
@@ -57,6 +60,7 @@
         :required="required"
         :disabled="canEdit"
         :placeholder="placeholder">
+        <i v-if="showImportant" class="icon cubeic-important"></i>
       </div>
     </div>
 
@@ -72,6 +76,7 @@
         :required="required"
         :disabled="canEdit"
         :placeholder="placeholder">
+        <i v-if="showImportant" class="icon cubeic-important"></i>
       </div>
     </div>
 
@@ -95,24 +100,29 @@
         :required="required"
         :disabled="canEdit"
         :placeholder="placeholder">
+        <i v-if="showImportant" class="icon cubeic-important"></i>
       </div>
     </div>
 
     <div v-if="type === 'combobox'" class="input-row select">
       <label for="移动端下拉框 select类型" class="label-text">{{ label }}</label>
-      <power-select
-        class="input"
-        v-model="rowValue"
-        :comboboxdata="comboboxdata"
-        :KeyWord="KeyWord"
-        :field="field"
-        :title="label"
-        :readonly="readonly"
-        :required="canEdit"
-        :disabled="canEdit"
-        @change="change"
-      >
-      </power-select>
+      <div class="input-select">
+        <power-select
+          class="input"
+          v-model="rowValue"
+          :comboboxdata="comboboxdata"
+          :KeyWord="KeyWord"
+          :field="field"
+          :title="label"
+          :readonly="readonly"
+          :required="canEdit"
+          :disabled="canEdit"
+          @change="change"
+        >
+        </power-select>
+        <i v-if="showImportant" class="icon cubeic-important"></i>
+      </div>
+
     </div>
 
     <div v-if="type === 'textarea'" class="textarea-row textarea">
@@ -128,6 +138,7 @@
           :required="required"
           :placeholder="placeholder"
         ></x-textarea>
+        <i v-if="showImportant" class="icon cubeic-important"></i>
       </group>
     </div>
 
@@ -206,6 +217,10 @@ export default {
       default () {
         return {}
       }
+    },
+    submit: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -223,6 +238,17 @@ export default {
     }
   },
   computed: {
+    showImportant () {
+      if (this.submit) {
+        if (this.required && !this.rowValue) {
+          return true
+        } else {
+          return false
+        }
+      } else {
+        return false
+      }
+    },
     ...mapGetters([
       'formStatus'
     ])
@@ -430,6 +456,21 @@ export default {
       .label-text {
         .label-text();
       }
+      .input-select {
+        .input();
+        line-height: 40px;
+        .cube-select.input {
+          width: 100%;
+        }
+        .icon {
+          position: absolute;
+          top: 50%;
+          right: 3px;
+          transform: translate(0, -50%);
+          font-size: 20px;
+          .error-status();
+        }
+      }
       .input {
         .input();
         line-height: 40px;
@@ -442,6 +483,14 @@ export default {
             border: none!important;
           }
           padding-right: 10px;
+        }
+        .icon {
+          position: absolute;
+          top: 50%;
+          right: 3px;
+          transform: translate(0, -50%);
+          font-size: 20px;
+          .error-status();
         }
       }
     }

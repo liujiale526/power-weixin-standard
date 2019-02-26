@@ -38,6 +38,7 @@
                 :fieldItem="fieldItem"
                 :mainformData="mainformData"
                 :comboboxdata="formAllConfig.comboboxdata || {}"
+                :submit="submit"
                 @enterChange="formRowChange"
               ></form-row>
             </form>
@@ -184,7 +185,8 @@ export default {
       },
       formAllConfig: {},
       keywordright: {},
-      workflowdata: {}
+      workflowdata: {},
+      submit: false
     }
   },
   computed: {
@@ -226,6 +228,30 @@ export default {
         }
       })
     },
+    // 校验数据
+    verifyRequireError: function (mainformData, controls) {
+      this.submit = true
+      let arr = [...controls]
+      let requiredFields = arr.filter((item) => {
+        if (item.required) {
+          return item
+        }
+      })
+
+      if (requiredFields.length === 0) {
+        return false
+      }
+
+      for (let i = 0; i < requiredFields.length; i++) {
+        let item = requiredFields[i]
+
+        if (!mainformData[item.field]) {
+          return true
+        }
+      }
+
+      return false
+    },
     // 保存主表
     saveFromData (callback, msg) {
       let { formstate } = this.routerParams
@@ -235,6 +261,14 @@ export default {
         routerParams: this.routerParams,
         formAllConfig: this.formAllConfig
       })
+
+      let appconfig = this.formAllConfig.formconfig.appconfig
+      let verify = this.verifyRequireError(this.mainformData, appconfig.controls)
+
+      if (verify) {
+        this.AlertShowEvent('请补充必填项')
+        return false
+      }
 
       this.FormSaveData(params).then((response) => {
         if (!msg) {
@@ -379,6 +413,7 @@ export default {
 
       this.FormDataChilds(params).then((response) => {
         let getData = response.data.value
+        console.log(getData)
         let childrenData = [...getData.children]
         childrenData.forEach((item, index) => {
           if (!item.values) {
