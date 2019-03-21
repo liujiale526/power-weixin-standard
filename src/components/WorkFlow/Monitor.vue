@@ -36,7 +36,7 @@
                   <div class="name">{{ item.DeptPositionName }}: {{ item.UserName }}</div>
                 </div>
                 <div class="unit-item unit-content">
-                  <div class="name">意 见:{{ formatInboxStatus(item) }} {{ item.BeforeContent }}</div>
+                  <div class="name">意 见:{{ formatInboxStatus(item) }} {{ item.Content }}</div>
                 </div>
               </div>
             </div>

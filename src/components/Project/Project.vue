@@ -1,6 +1,6 @@
 <template>
   <div class="content-box business">
-    <iframe ref="iframe" class="iframe" :src="link" frameborder="0"></iframe>
+    <iframe ref="iframe" scrolling="no" class="iframe" :src="link" frameborder="0"></iframe>
   </div>
 </template>
 <script type="text/ecmascript-6">
@@ -17,9 +17,16 @@ export default {
     }
   },
   mounted () {
+    let that = this
+    window.getSecretKey = function () {
+      return that.getSecretKey()
+    }
     this.loadPage()
   },
   methods: {
+    getSecretKey () {
+      return {token: '123'}
+    },
     loadPage () {
       let that = this
       that.showLoading(true)
@@ -49,20 +56,19 @@ export default {
     top: 0;
     left: 0;
     right: 0;
-    bottom: 56px;
     z-index: 100;
+    width: 100%;
+    height: calc(100% - 56px);
+    overflow-x: hidden;
     .iframe {
       display: block;
-      width: 100%;
-      height: 100%;
       margin: 0;
       padding: 0;
-      overflow-y: auto;
-      overflow-x: hidden;
+      overflow: scroll;
       -webkit-overflow-scrolling: touch;
-      html {
-        background-color: red;
-      }
+      min-width: 100%;
+      width: 1px;
+      height: 100%;
     }
   }
 </style>

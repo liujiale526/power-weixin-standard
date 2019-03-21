@@ -27,7 +27,7 @@ export function BusinessDataLoad (obj) {
   return APIUnit(API, params)
 }
 
-// 执行退出
+// 修改密码
 export function ChangePass (OldPass, NewPass) {
   const API = '/Hoter/ChangePass'
   const params = {
