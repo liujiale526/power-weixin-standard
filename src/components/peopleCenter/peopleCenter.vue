@@ -183,7 +183,7 @@ export default {
           clearStorage()
           this.$router.push('/login')
         } else {
-          this.AlertShowEvent(e.message)
+          this.errLogin(e)
         }
       })
 
