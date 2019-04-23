@@ -8,8 +8,13 @@ import { systemConfig, loginParams, localStorageTag } from 'common/js/config'
 const debug = process.env.NODE_ENV !== 'production'
 
 // 缓存Token字符串
-function storageToken (data) {
-  storage.set(localStorageTag + 'Token', data.data.token)
+export function storageToken (data) {
+  let toString = Object.prototype.toString
+  if (toString.call(data) === '[object Object]') {
+    storage.set(localStorageTag + 'Token', data.data.token)
+  } else {
+    storage.set(localStorageTag + 'Token', data)
+  }
 }
 
 // 执行登录功能

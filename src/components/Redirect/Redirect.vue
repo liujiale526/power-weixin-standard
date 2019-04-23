@@ -11,6 +11,8 @@
 </template>
 <script type="text/ecmascript-6">
 import { Alert } from 'vux'
+import { storageToken } from 'api/login'
+import { mapActions } from 'vuex'
 
 const ERROR = '链接参数错误'
 
@@ -19,7 +21,8 @@ export default {
     return {
       alertShow: false,
       alertTitle: '提示',
-      message: ''
+      message: '',
+      token: ''
     }
   },
   created () {
@@ -29,13 +32,29 @@ export default {
     // 跳转页面
     goToPage () {
       let { query } = this.$router.history.current
-      let { url } = query
+      let { url, token } = query
 
       if (url) {
         this.$router.push(url)
-      } else {
+      }
+
+      if (token) {
+        this.token = token
+        storageToken(token)
+        this.getUserSession()
+      }
+
+      if (!url && !token) {
         this.ShowHideEvent(ERROR)
       }
+    },
+    getUserSession () {
+      // 在执行获取UserSession
+      this.GetUserSession().then((res) => {
+        this.$router.push('/business')
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
+      })
     },
     // alert组件隐藏的时候需要做的事
     AlertHideEvent () {
@@ -45,7 +64,11 @@ export default {
     ShowHideEvent (msg) {
       this.message = msg
       this.alertShow = true
-    }
+    },
+    ...mapActions([
+      'GetUserSession',
+      'AlertShowEvent'
+    ])
   },
   components: {
     Alert

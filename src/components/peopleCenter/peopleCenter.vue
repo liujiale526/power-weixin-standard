@@ -62,10 +62,10 @@
               </div>
             </div>
           </div>
-          <div class="action-item">
+          <div v-if="false" class="action-item">
             <div class="change-text">
               <i class="fa fa-sign-out" aria-hidden="true"></i>
-              强制退出(慎用)
+              强制退出
             </div>
             <div @click="clearStore" class="change-icon ">
               <div class="icon-wrap">
@@ -75,7 +75,7 @@
           </div>
         </div>
         <div class="sign-out-wrap">
-          <div @click="signOut" class="sign-out">
+          <div @click="clearStore" class="sign-out">
             退出登录
           </div>
         </div>
@@ -174,7 +174,11 @@ export default {
     },
     clearStore () {
       clearStorage()
-      this.$router.push('/login')
+      if (debug) {
+        this.$router.push('/login')
+      } else {
+        this.$wechat.closeWindow()
+      }
     },
     // 加载数据
     settingLoad (callback) {

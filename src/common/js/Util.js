@@ -7,6 +7,9 @@ import {
 } from 'common/js/config.js'
 import { getTokenString, getTokenMsg } from 'api/login.js'
 
+// 判断运行环境 是在开发中还是在生产环境中
+const debug = process.env.NODE_ENV !== 'production'
+
 const switchsTail = {
   fileAttach: {
     name: '附件',
@@ -332,12 +335,6 @@ export function redirectRoutes (Map) {
       redirect: '/business'
     })
     routes.push(obj)
-  } else {
-    obj = Object.assign({}, {
-      path: '/',
-      redirect: '/login'
-    })
-    routes.push(obj)
   }
 
   routes = routes.concat(Map)
@@ -451,7 +448,11 @@ export function routerBeforeEach (router) {
     if (!Token && !isLoginPage && !hasLogin) {
       // 回到登录页 要清除缓存
       storage.clear()
-      next('/login')
+      if (debug) {
+        next('/login')
+      } else {
+        next()
+      }
     } else {
       next()
     }

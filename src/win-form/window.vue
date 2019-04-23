@@ -186,6 +186,11 @@ export default {
 
         this.windowConfig = JSON.parse(value[0].WeixinExtJson)
         this.getWindowConfigForUI(this.windowConfig)
+
+        value[0].ExtJson = JSON.parse(value[0].ExtJson)
+        value[0].WeixinExtJson = JSON.parse(value[0].WeixinExtJson)
+        console.log(value[0])
+        console.log(JSON.stringify(value))
         callback && callback()
       }).catch((e) => {
         this.errLogin(e)
