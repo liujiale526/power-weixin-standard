@@ -58,6 +58,7 @@
 	    "type": "grid",// (可填)窗体中数据格式是什么形式（程序中暂时没有用到此属性）
 	    "winTitle": "合同登记",// (可填)窗体的title（默认值是窗体）
 	    "tableListType": "default",// (可填)窗体数据的UI展示形式
+			"hideActionBar": false, 默认是false, 如果不想要窗体的新增删除按钮可以设置为true
 	    "title": {// 窗体中每一条数据的title位置相关的属性和信息
 	        "title": "合同名称",// title的字段名
 	        "field": "ContractName",// title要显示的对应的字段
@@ -235,6 +236,7 @@
 			"KeyWord": "PS_IncomeContract_PayNodes",//(必填) 子表的关键字
 			"tableListType": "default",//(可填) 子表列表显示的样式 和上面窗体中的tableListType值一样 具体的参考窗体的tableListType属性
 			"idfield": "Id",(必填) 子表的主键
+			"hideActionBar": false, 默认是false, 如果不想要子表的新增删除按钮可以设置为true
 			"type": "grid",//(可填，暂时没用到此属性，后面会用到) 子表的类表的类型
 			"name": "付款节点",// (必填) 表的名称 字数最好控制在4-6个字
 			"title": {// 具体可以参考窗体的此属性
