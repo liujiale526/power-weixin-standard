@@ -453,13 +453,16 @@ export function routerBeforeEach (router) {
       } else {
         next()
       }
-    } else {
-      next()
+
+      return false
     }
 
     if (to.query.url === from.path) {
       next('/workinfos')
+      return false
     }
+
+    next()
   })
 }
 

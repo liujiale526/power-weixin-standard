@@ -127,6 +127,7 @@
 ## [表单的配置](https://github.com/JohnJiang900526/power-weixin-standard/blob/master/src/common/json/form.json, "表单的配置")  (表单的配置 click the blue fonts)  ##
 
 	{
+		"mainformAttach": false, 在主表中显示附件true显示，false不显示
 		"print": "false",(可填)这个属性暂时没用到
 		"comment": true,//(可填)是否启用表单的评论模块 true启用， false或者不填为禁用
 		"report": true,//(可填)是否启用表单的报表模块 true启用， false或者不填为禁用
