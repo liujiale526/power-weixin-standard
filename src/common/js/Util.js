@@ -557,7 +557,7 @@ export function hostAddress (NODE_ENV) {
 // 获取附件的icon
 export function getFileIcon (item) {
   const debug = process.env.NODE_ENV !== 'production'
-  let imgPath = `${systemConfig.devDomainName}/PowerPlat/Control/File.ashx?action=browser&_type=ftp&_fileid=`
+  let imgPath = `${systemConfig.devDomainName}/Hoter/showFile?token=${getTokenString()}&fileId=`
   let publicPath = debug ? '/static/img/' : '/weixin3.0/static/img/'
 
   if (/\.(png|jpe?g|gif|svg)(\?.*)?$/.test(item.FileExt)) {

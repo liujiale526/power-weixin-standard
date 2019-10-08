@@ -260,7 +260,7 @@ export const deleteFileData = function ({commit}, id) {
   return new Promise((resolve, reject) => {
     commit(types.SHOWLOADING, true)
     deleteFile(id).then((res) => {
-      let result = res.data
+      let result = res
       commit(types.SHOWLOADING, false)
       if (result.success) {
         resolve(result)

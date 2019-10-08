@@ -262,6 +262,7 @@ export default {
     // 删除附件的功能
     deleteFile (item) {
       this.deleteFileData(item.Id).then((res) => {
+        this.ToastShowEvent('删除成功~~')
         this.GetDocFilesLoad(this.KeyWord, this.KeyValue)
       }).catch((e) => {
         this.AlertShowEvent(e.message)
@@ -335,7 +336,9 @@ export default {
         if (this.loadStart) {
           this.GetDocFilesLoad(this.KeyWord, this.KeyValue)
 
-          this.getConfig()
+          if (window.useWeixinUpload) {
+            this.getConfig()
+          }
         }
       },
       immediate: true
