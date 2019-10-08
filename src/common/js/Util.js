@@ -6,6 +6,7 @@ import {
   ECanFlowOperate
 } from 'common/js/config.js'
 import { getTokenString, getTokenMsg } from 'api/login.js'
+import { uploadFile } from 'api'
 
 // 判断运行环境 是在开发中还是在生产环境中
 const debug = process.env.NODE_ENV !== 'production'
@@ -938,5 +939,76 @@ export function checkLoginTime (TokenMsg) {
     return true
   } else {
     return false
+  }
+}
+// h5 原生文件流上传方法
+export class UploadFile {
+  constructor (token, KeyValue, KeyWord, successCallBack, errorCallBack, humLogo = false) {
+    if (!humLogo && (!token || !KeyValue || !KeyWord)) {
+      throw new Error('请传入必要参数')
+    }
+    this.token = token
+    this.KeyValue = KeyValue
+    this.KeyWord = KeyWord
+    this.successCallBack = successCallBack
+    this.errorCallBack = errorCallBack
+    this.humLogo = humLogo
+    this.selectFile = null
+    this.init()
+  }
+  // 初始化事件
+  init () {
+    this.destroy()
+    let InputFileWrap = document.createElement('div')
+    let template = ''
+    if (!this.humLogo) {
+      template = '<input type="file" name="file" id="selectFile">'
+    } else {
+      template = '<input type="file" name="file" id="selectFile" accept="image/*">'
+    }
+    InputFileWrap.id = 'InputFile'
+    InputFileWrap.style['opacity'] = 0
+    InputFileWrap.style['width'] = 0
+    InputFileWrap.style['height'] = 0
+    InputFileWrap.innerHTML = template
+    if (document.body.appendChild) {
+      document.body.appendChild(InputFileWrap)
+    } else if (document.body.append) {
+      document.body.append(InputFileWrap)
+    }
+    this.selectFile = document.getElementById('selectFile')
+    // 绑定事件
+    this.clickHandle()
+    this.selectFile.click()
+  }
+  clickHandle () {
+    if (this.selectFile) {
+      this.selectFile.onchange = (event) => {
+        let e = window.event || event
+        let file = e.target.files[0]
+        let formData = new FormData()
+
+        formData.append('FileData', file)
+        formData.append('token', this.token || '')
+        formData.append('KeyValue', this.KeyValue)
+        formData.append('KeyWord', this.KeyWord)
+
+        uploadFile(formData).then((res) => {
+          this.successCallBack && this.successCallBack(res)
+          this.destroy()
+        }).catch((e) => {
+          this.errorCallBack && this.errorCallBack(e)
+          this.destroy()
+        })
+      }
+    }
+  }
+
+  destroy () {
+    let isInputFile = document.getElementById('InputFile')
+    if (isInputFile) {
+      document.body.removeChild(isInputFile)
+    }
+    this.selectFile = null
   }
 }

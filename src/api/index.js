@@ -345,11 +345,13 @@ export function AlterNotifyMsg (KeyValue) {
 
 // 获取微信js-sdk的配置信息
 export function GetJsSdk (url) {
-  return axios.get('/Weixin/GetImageJsSdk', {
-    params: {
-      url: url
-    }
-  })
+  const API = '/Hoter/GetImageJsSdk'
+  const params = {
+    url: url,
+    token: getTokenString()
+  }
+
+  return APIUnit(API, params)
 }
 
 // AddImage 微信上上传图片
@@ -433,13 +435,13 @@ export function PostComment (jsonData) {
 
 // 删除附件 deleteFile
 export function deleteFile (id) {
-  return axios.get('/PowerPlat/Control/File.ashx', {
-    params: {
-      _type: 'ftp',
-      action: 'delete',
-      _fileid: id
-    }
-  })
+  const API = '/Hoter/deleteAttach'
+  const params = {
+    token: getTokenString(),
+    id
+  }
+
+  return APIUnit(API, params)
 }
 
 // 重置session
@@ -449,5 +451,48 @@ export function getUserSessionData (params) {
       sessionId: '',
       userId: ''
     }, params)
+  })
+}
+
+export function uploadFile (obj) {
+  const API = '/Mobile/Upload'
+
+  return new Promise((resolve, reject) => {
+    apiFormdata(API, obj, 'post').then((res) => {
+      if (res.code !== 200) {
+        reject(createErrorObject(res.msg))
+      } else {
+        resolve(res)
+      }
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
+
+function createErrorObject (errorMsg) {
+  return {
+    message: errorMsg
+  }
+}
+export function apiFormdata (url, params, method = 'post') {
+  return new Promise((resolve, reject) => {
+    let option = {
+      method: method,
+      url: url,
+      data: params
+    }
+
+    if (params.hasOwnProperty('token')) {
+      if (!params.token) {
+        return false
+      }
+    }
+
+    axios(option).then((res) => {
+      resolve(res.data)
+    }).catch((e) => {
+      reject(e)
+    })
   })
 }

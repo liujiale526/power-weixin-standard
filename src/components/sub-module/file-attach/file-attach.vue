@@ -52,7 +52,6 @@
 import { mapGetters, mapActions } from 'vuex'
 import AttachList from 'base/attach-list/attach-list.vue'
 import { hostAddress } from 'common/js/Util.js'
-import { getStoreUserSession } from 'api/UserSession.js'
 
 export default {
   props: {
@@ -166,9 +165,13 @@ export default {
     },
     // 上传
     upLoad () {
-      this.addImageFile(() => {
-        this.upLoadFileWX()
-      })
+      if (window.useWeixinUpload) {
+        this.addImageFile(() => {
+          this.upLoadFileWX()
+        })
+      } else {
+
+      }
     },
     // 添加图片
     addImageFile (callback) {
@@ -315,8 +318,7 @@ export default {
       'GetJsSdkData',
       'AddImageData',
       'AlertShowEvent',
-      'ToastShowEvent',
-      'GetUserSessionData'
+      'ToastShowEvent'
     ])
   },
   watch: {
@@ -325,16 +327,7 @@ export default {
         if (this.loadStart) {
           this.GetDocFilesLoad(this.KeyWord, this.KeyValue)
 
-          let storeUserSession = getStoreUserSession()
-          let params = {
-            sessionId: storeUserSession.SessionId,
-            userId: storeUserSession.UserId
-          }
-          this.GetUserSessionData(params).then((res) => {
-            this.getConfig()
-          }).catch((e) => {
-            this.AlertShowEvent(e.message)
-          })
+          this.getConfig()
         }
       },
       immediate: true
