@@ -157,7 +157,7 @@ export default {
     getConfig () {
       let link = location.href.split('#')[0]
       this.GetJsSdkData(link).then((res) => {
-        this.config = Object.assign({}, res)
+        this.config = Object.assign({}, res.data)
         this.config.jsApiList = this.config.jsApiList.concat(['previewFile'])
         this.wx.config(this.config)
         this.configInit = true
@@ -174,6 +174,7 @@ export default {
         })
       } else {
         this.UploadFile = new UploadFile(TOKEN, this.KeyValue, this.KeyWord, () => {
+          this.GetDocFilesLoad(this.KeyWord, this.KeyValue)
           this.ToastShowEvent('上传成功~~')
         }, (e) => {
           this.AlertShowEvent(e.message)

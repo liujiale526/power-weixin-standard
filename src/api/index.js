@@ -455,11 +455,11 @@ export function getUserSessionData (params) {
 }
 
 export function uploadFile (obj) {
-  const API = '/Mobile/Upload'
+  const API = '/Hoter/Upload'
 
   return new Promise((resolve, reject) => {
     apiFormdata(API, obj, 'post').then((res) => {
-      if (res.code !== 200) {
+      if (res.success !== true) {
         reject(createErrorObject(res.msg))
       } else {
         resolve(res)

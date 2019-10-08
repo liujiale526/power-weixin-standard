@@ -243,9 +243,9 @@ export const GetJsSdkData = function ({commit}, url) {
     commit(types.SHOWLOADING, true)
     GetJsSdk(url).then((res) => {
       commit(types.SHOWLOADING, false)
-      let result = res.data
+      let result = res
       if (result.success) {
-        resolve(result.data)
+        resolve(result)
       } else {
         reject(getError(result.msg))
       }

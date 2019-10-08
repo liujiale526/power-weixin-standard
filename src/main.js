@@ -8,7 +8,7 @@ import store from './store'
 import { WechatPlugin } from 'vux'
 import Cube from 'cube-ui'
 import VueLazyload from 'vue-lazyload'
-import fastClick from 'fastclick'
+// import fastClick from 'fastclick'
 import { routerBeforeEach } from './common/js/Util.js'
 import 'font-awesome/css/font-awesome.css'
 
@@ -18,7 +18,6 @@ Vue.use(VueLazyload, {
   loading: require('common/img/default.png')
 })
 
-fastClick.attach(document.body)
 Vue.config.productionTip = false
 
 // 导航守卫
