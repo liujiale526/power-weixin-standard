@@ -5,7 +5,7 @@
         <div v-if="picFileAttach.length > 0" class="file-attach-type">
           <h1 class="type-title">图片</h1>
           <ul class="file-attach-lists">
-            <li @click.stop.prevent="previewImage(item)" v-for="item in picFileAttach" :key="item.Id" class="file-attach-list">
+            <li @click.stop.prevent="previewImage(item, index)" v-for="(item, index) in picFileAttach" :key="item.Id" class="file-attach-list">
               <attach-list :isEdit="isEdit" @deleteFile="deleteFile" :attachList="item"></attach-list>
             </li>
           </ul>
@@ -13,7 +13,7 @@
         <div v-if="mediaFileAttach.length > 0" class="file-attach-type">
           <h1 class="type-title">视频</h1>
           <ul class="file-attach-lists">
-            <li @click.stop.prevent="showFile(item)" v-for="item in mediaFileAttach" :key="item.Id" class="file-attach-list">
+            <li @click.stop.prevent="previewVideo(item)" v-for="item in mediaFileAttach" :key="item.Id" class="file-attach-list">
               <attach-list :isEdit="isEdit" @deleteFile="deleteFile" :attachList="item"></attach-list>
             </li>
           </ul>
@@ -46,15 +46,18 @@
         <span class="fa fa-reply"></span>
       </div>
     </div>
+    <player ref="player"></player>
   </div>
 </template>
 <script type="text/ecmascript-6">
 import { mapGetters, mapActions } from 'vuex'
 import AttachList from 'base/attach-list/attach-list.vue'
+import player from 'base/player/player.vue'
 import { hostAddress, UploadFile } from 'common/js/Util.js'
 import { getTokenString } from 'api/login.js'
 
 const TOKEN = getTokenString()
+const debug = process.env.NODE_ENV !== 'production'
 
 export default {
   props: {
@@ -137,9 +140,9 @@ export default {
       }
     },
     // 预览图片
-    previewImage (item) {
-      let origin = location.origin
-      let address = '/PowerPlat/Control/File.ashx?action=browser&_type=ftp&_fileid='
+    previewImage (item, index) {
+      let origin = debug ? this.host : '/'
+      let address = `/Hoter/showFile?token=${TOKEN}&fileId=`
       let imgArray = []
       let currentImg = origin + address + item.Id
 
@@ -148,9 +151,23 @@ export default {
         imgArray.push(url)
       })
 
+      this.$createImagePreview({
+        imgs: imgArray,
+        initialIndex: (index + 1)
+      }).show()
+
       this.wx.previewImage({
         current: currentImg,
         urls: imgArray
+      })
+    },
+    // 查看视频
+    previewVideo (item) {
+      let base = `Hoter/showFile?token=${TOKEN}&fileId=${item.Id}`
+      let link = debug ? `${this.host}${base}` : base
+
+      this.$refs.player.setVideoData({
+        url: link
       })
     },
     // 获取企业微信配置信息
@@ -345,7 +362,8 @@ export default {
     }
   },
   components: {
-    AttachList
+    AttachList,
+    player
   }
 }
 </script>
