@@ -476,10 +476,11 @@ function createErrorObject (errorMsg) {
   }
 }
 export function apiFormdata (url, params, method = 'post') {
+  let api = debug ? systemConfig.devDomainName + url : url
   return new Promise((resolve, reject) => {
     let option = {
       method: method,
-      url: url,
+      url: api,
       data: params
     }
 

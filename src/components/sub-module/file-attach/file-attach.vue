@@ -51,7 +51,10 @@
 <script type="text/ecmascript-6">
 import { mapGetters, mapActions } from 'vuex'
 import AttachList from 'base/attach-list/attach-list.vue'
-import { hostAddress } from 'common/js/Util.js'
+import { hostAddress, UploadFile } from 'common/js/Util.js'
+import { getTokenString } from 'api/login.js'
+
+const TOKEN = getTokenString()
 
 export default {
   props: {
@@ -170,7 +173,11 @@ export default {
           this.upLoadFileWX()
         })
       } else {
-
+        this.UploadFile = new UploadFile(TOKEN, this.KeyValue, this.KeyWord, () => {
+          this.ToastShowEvent('上传成功~~')
+        }, (e) => {
+          this.AlertShowEvent(e.message)
+        })
       }
     },
     // 添加图片

@@ -981,6 +981,7 @@ export class UploadFile {
     this.clickHandle()
     this.selectFile.click()
   }
+
   clickHandle () {
     if (this.selectFile) {
       this.selectFile.onchange = (event) => {
