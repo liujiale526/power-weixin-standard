@@ -141,7 +141,7 @@ export default {
     },
     // 预览图片
     previewImage (item, index) {
-      let origin = debug ? this.host : '/'
+      let origin = debug ? this.host : ''
       let address = `/Hoter/showFile?token=${TOKEN}&fileId=`
       let imgArray = []
       let currentImg = origin + address + item.Id
@@ -163,7 +163,7 @@ export default {
     },
     // 查看视频
     previewVideo (item) {
-      let base = `Hoter/showFile?token=${TOKEN}&fileId=${item.Id}`
+      let base = `/Hoter/showFile?token=${TOKEN}&fileId=${item.Id}`
       let link = debug ? `${this.host}${base}` : base
 
       this.$refs.player.setVideoData({
