@@ -934,8 +934,10 @@ export function checkLoginTime (TokenMsg) {
   if (!TokenMsg.exp) {
     return false
   }
+  // 结束时间
+  let exp = TokenMsg.exp * 1000
 
-  if ((nowTime - TokenMsg.exp) > 0) {
+  if ((exp - nowTime - 3600) > 0) {
     return true
   } else {
     return false

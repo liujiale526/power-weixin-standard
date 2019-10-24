@@ -204,7 +204,8 @@ export default {
       }
 
       this.FormInitData(params).then((response) => {
-        this.comboboxdata = Object.assign({}, JSON.parse(response.data.comboboxdata))
+        let comboboxdata = response.data.comboboxdata || '{}'
+        this.comboboxdata = Object.assign({}, JSON.parse(comboboxdata))
         callback && callback()
       }).catch((e) => {
         this.errLogin(e)
