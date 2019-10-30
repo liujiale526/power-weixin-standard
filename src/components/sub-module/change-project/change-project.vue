@@ -1,7 +1,7 @@
 <template>
   <transition name="slide">
     <div class="change-project" ref="changeProject">
-      <div ref="headerChange" class="header-change">
+      <div class="header-change">
         <div class="searchWrap">
           <search-box placeholder="搜索项目名称"
             v-model="searchQuery"
@@ -9,47 +9,65 @@
           ></search-box>
         </div>
       </div>
-      <div ref="switchesWrap" class="switches-wrap">
+      <div class="switches-wrap">
         <switches-box @switch="switchItem" :currentIndex="currentIndex"></switches-box>
       </div>
-      <div ref="projectListsWrap" class="project-lists-wrap">
-        <div class="project-lists-change-wrap">
-          <div class="project-full-msg project" v-show="isShow(0)">
-            <ul class="project-lists">
-              <li @click="_switchEpsProject(item)" v-for="item in projects" :key="item.project_guid" class="project-list">
-                <div class="list-wrap">
-                  <div class="icon-box">
-                    <img v-lazy="computedLink(item)" alt="">
-                  </div>
-                  <div class="text-box">
-                    <p class="v-text-inner title">
-                      {{ item.project_name }}
-                    </p>
-                    <div class="v-text-inner">
-                      <span>开工时间:</span>
-                      <span> {{ _formatDate(item.target_start_date) }} </span>
+      <div class="project-lists-wrap">
+        <div class="project-lists-change-wrap" :style="{'transform': 'translate3d(' + this.offset + '%, 0, 0)'}">
+          <div class="project-full-msg project">
+            <cube-scroll
+            :data="projects"
+            :options="options"
+            @pulling-down="projectPullingDown"
+            @pulling-up="projectPullingUp"
+            >
+              <div class="scroll-wrap">
+                <ul class="project-lists">
+                  <li @click="_switchEpsProject(item)" v-for="item in projects" :key="item.project_guid" class="project-list">
+                    <div class="list-wrap">
+                      <div class="icon-box">
+                        <img v-lazy="computedLink(item)" alt="">
+                      </div>
+                      <div class="text-box">
+                        <p class="v-text-inner title">
+                          {{ item.project_name }}
+                        </p>
+                        <div class="v-text-inner">
+                          <span>开工时间:</span>
+                          <span> {{ _formatDate(item.target_start_date) }} </span>
+                        </div>
+                        <div class="v-text-inner">
+                          <span>开工时间:</span>
+                          <span>{{ _formatDate(item.target_end_date) }}</span>
+                        </div>
+                        <div class="v-text-inner">
+                          <span>项目经理:</span>
+                          <span>{{item.Pro_manager_name}}</span>
+                        </div>
+                      </div>
                     </div>
-                    <div class="v-text-inner">
-                      <span>开工时间:</span>
-                      <span>{{ _formatDate(item.target_end_date) }}</span>
-                    </div>
-                    <div class="v-text-inner">
-                      <span>项目经理:</span>
-                      <span>{{item.Pro_manager_name}}</span>
-                    </div>
-                  </div>
-                </div>
-              </li>
-            </ul>
+                  </li>
+                </ul>
+              </div>
+            </cube-scroll>
           </div>
-          <div class="project-shot-msg eps" v-show="isShow(1)">
-            <ul class="project-lists">
-              <li @click="_switchEpsProject(item)" v-for="item in EPS" :key="item.project_guid" class="project-list">
-                <div class="shot-list-wrap">
-                  <span class="project-eps">{{ item.project_name }}</span>
-                </div>
-              </li>
-            </ul>
+          <div class="project-shot-msg eps">
+            <cube-scroll
+            :data="EPS"
+            :options="options"
+            @pulling-down="epsPullingDown"
+            @pulling-up="epsPullingUp"
+            >
+              <div class="scroll-wrap">
+                <ul class="project-lists">
+                  <li @click="_switchEpsProject(item)" v-for="item in EPS" :key="item.project_guid" class="project-list">
+                    <div class="shot-list-wrap">
+                      <span class="project-eps">{{ item.project_name }}</span>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </cube-scroll>
           </div>
         </div>
       </div>
@@ -64,31 +82,51 @@ import {
   SwitchesBox
 } from 'components'
 
-import { formatDate, searchLists } from 'common/js/Util.js'
+import { formatDate } from 'common/js/Util.js'
 import { systemConfig } from 'common/js/config.js'
-import { errLoginMixin } from 'common/js/mixin.js'
 
 const debug = process.env.NODE_ENV !== 'production'
-const isProject = '1'
-const isESP = '0'
 const DATATYPE = 'yyyy-MM-dd HH:mm:ss'
 const SWICTHSUCCESS = '切换成功'
 
 export default {
-  mixins: [errLoginMixin],
   name: 'changeproject',
   data () {
     return {
       currentIndex: 0,
+      pullDownRefreshThreshold: 60,
       projects: [],
       EPS: [],
       focused: false,
       searchQuery: '',
-      searchField: 'project_name'
+      searchField: 'project_name',
+      epsSize: 20,
+      epsIndex: 0,
+      projectSize: 10,
+      projectIndex: 0
+    }
+  },
+  computed: {
+    offset () {
+      return this.currentIndex === 0 ? 0 : -50
+    },
+    options () {
+      return {
+        pullDownRefresh: {
+          threshold: parseInt(this.pullDownRefreshThreshold),
+          txt: '刷新成功'
+        },
+        pullUpLoad: {
+          threshold: parseInt(this.pullDownRefreshThreshold),
+          txt: '加载成功'
+        },
+        scrollbar: false
+      }
     }
   },
   mounted () {
-    this._getEpsProjects()
+    // 先加载项目
+    this.projectPullingDown()
   },
   methods: {
     // 计算图片地址
@@ -103,42 +141,79 @@ export default {
         }
       }
     },
-    // 获取项目数据 进行项目和EPS分类
-    _getEpsProjects (query) {
-      this.getEpsProjectsData().then((response) => {
-        let data = response.data.value
-        let projects = []
-        let EPS = []
+    // 获取项目列表
+    getProjects (type = 'normal') {
+      let obj = {
+        type: 'proj',
+        showClose: '0',
+        keyword: this.searchQuery,
+        index: this.projectIndex + '',
+        size: this.projectSize + ''
+      }
 
-        let arr = [...data].filter((item) => {
-          if (item.STATE === 0 && item.EpsProjType !== 0) {
-            return item
-          }
-        })
+      this.getEpsProjectsData(obj).then((response) => {
+        let data = response.data.value || []
 
-        arr.forEach((item, index) => {
-          if ((item.project_type + '') === isProject) {
-            projects.push(item)
-          } else if ((item.project_type + '') === isESP) {
-            EPS.push(item)
-          }
-        })
-
-        if (!query || query === '') {
-          this.projects = projects
-          this.EPS = EPS
+        if (type === 'init') {
+          this.projects = [...data]
         } else {
-          if (this.currentIndex === 0) {
-            this.projects = searchLists(this.searchField, query, projects)
-            this.EPS = EPS
-          } else {
-            this.projects = projects
-            this.EPS = searchLists(this.searchField, query, EPS)
-          }
+          this.projects = [...this.projects, ...data]
+        }
+
+        this.projectIndex += 1
+
+        if (data.length === 0) {
+          this.projectIndex -= 1
         }
       }).catch((e) => {
-        this.errLogin(e)
+        this.AlertShowEvent(e.message)
       })
+    },
+    // 项目下拉刷新
+    projectPullingDown () {
+      this.projectIndex = 0
+      this.getProjects('init')
+    },
+    // 项目滚动事件
+    projectPullingUp () {
+      this.getProjects()
+    },
+
+    // 获取EPS分类
+    getEPS (type = 'normal') {
+      let obj = {
+        type: 'eps',
+        showClose: '0',
+        keyword: this.searchQuery,
+        index: this.epsIndex + '',
+        size: this.epsSize + ''
+      }
+
+      this.getEpsProjectsData(obj).then((response) => {
+        let data = response.data.value || []
+
+        if (type === 'init') {
+          this.EPS = [...data]
+        } else {
+          this.EPS = [...this.EPS, ...data]
+        }
+
+        this.epsIndex += 1
+        if (data.length === 0) {
+          this.epsIndex -= 1
+        }
+      }).catch((e) => {
+        this.AlertShowEvent(e.message)
+      })
+    },
+    // eps下拉刷新
+    epsPullingDown () {
+      this.epsIndex = 0
+      this.getEPS('init')
+    },
+    // eps滚动加载
+    epsPullingUp () {
+      this.getEPS()
     },
     // 选择项目
     _switchEpsProject (item) {
@@ -151,32 +226,46 @@ export default {
             clearTimeout(this.timer)
           }
           this.timer = setTimeout(() => {
-            this.back()
+            this.$router.back()
+            this.$emit('ReLoad')
           }, 1000)
         }).catch((e) => {
-          this.errLogin(e)
+          this.AlertShowEvent(e.message)
         })
       }).catch((e) => {
-        this.errLogin(e)
+        this.AlertShowEvent(e.message)
       })
     },
-    // search start
+    // 执行搜索
     searchChange (query) {
       this.searchQuery = query
-      this.doSearchEvent()
+
+      if (this.currentIndex === 0) {
+        this.projectPullingDown()
+      } else {
+        this.epsPullingDown()
+      }
     },
-    // search action
-    doSearchEvent () {
-      this._getEpsProjects(this.searchQuery)
-    },
-    back () {
-      this.$router.back()
-    },
+    // 切换tab
     switchItem (index) {
       this.currentIndex = index
-    },
-    isShow (num) {
-      return this.currentIndex === num
+      if (this.currentIndex === 0) {
+        if (!this.searchQuery) {
+          if (this.projects.length === 0) {
+            this.getProjects()
+          }
+        } else {
+          this.projectPullingDown()
+        }
+      } else {
+        if (!this.searchQuery) {
+          if (this.EPS.length === 0) {
+            this.getEPS()
+          }
+        } else {
+          this.epsPullingDown()
+        }
+      }
     },
     _formatDate (time) {
       return formatDate(time, DATATYPE)
@@ -249,15 +338,20 @@ export default {
       border-bottom: 1px solid #dddddd;
     }
     .project-lists-wrap {
-      width: 100%;
+      width: 200%;
       height: calc(100% - 73px);
-      overflow-y: auto;
       .project-lists-change-wrap {
         width: 100%;
-        display: block;
-        .project-full-msg {
+        height: 100%;
+        display: flex;
+        transition: all 0.3s;
+        scroll-wrap {
           width: 100%;
-          display: block;
+          height: 100%;
+        }
+        .project-full-msg {
+          width: 50%;
+          flex: 1;
           .project-lists {
             .project-list {
               border-bottom: 5px solid #EBEEEE;
@@ -301,8 +395,8 @@ export default {
           }
         }
         .project-shot-msg {
-          width: 100%;
-          display: block;
+          width: 50%;
+          flex: 1;
           .shot-list-wrap {
             padding: 15px 10px;
             font-size: 13px;

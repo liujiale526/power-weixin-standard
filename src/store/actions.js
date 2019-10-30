@@ -57,10 +57,10 @@ export const GetUserSessionData = function ({commit}, params) {
 
 // 切换项目相关
 // 获取项目和EPS
-export const getEpsProjectsData = function ({commit}) {
+export const getEpsProjectsData = function ({commit}, obj) {
   return new Promise((resolve, reject) => {
     commit(types.SHOWLOADING, true)
-    getEpsProjects().then((res) => {
+    getEpsProjects(obj).then((res) => {
       commit(types.SHOWLOADING, false)
       if (res.success) {
         resolve(res)

@@ -39,11 +39,12 @@ export function ChangePass (OldPass, NewPass) {
 }
 
 // 获取EpsProjects
-export function getEpsProjects () {
+export function getEpsProjects (obj) {
   const API = '/Hoter/EpsProjects'
-  const params = {
+  const params = Object.assign({
     Token: getTokenString()
-  }
+  }, obj)
+
   return APIUnit(API, params)
 }
 
